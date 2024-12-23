@@ -98,7 +98,7 @@ public abstract class Order extends BaseEntity {
         this.notes = notes;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
