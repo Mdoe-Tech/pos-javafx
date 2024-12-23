@@ -54,7 +54,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee updateEmployee(Employee employee) throws ValidationException {
         // Validate employee exists
-        employeeDAO.findById(employee.getId());
+        employeeDAO.findById(employee.getId())
+                .orElseThrow(() -> new ValidationException("Employee not found"));
+
         // Validate employee data
         employee.validate();
 
@@ -75,7 +77,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void terminateEmployee(Long id) throws ValidationException {
-        Employee employee = employeeDAO.findById(id);
+        Employee employee = employeeDAO.findById(id)
+                .orElseThrow(() -> new ValidationException("Employee not found"));
+
         employee.setStatus(EmployeeStatus.TERMINATED);
         employee.setUpdatedAt(LocalDateTime.now());
 
@@ -100,7 +104,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateRoles(Long employeeId, Set<Role> roles) throws ValidationException {
-        Employee employee = employeeDAO.findById(employeeId);
+        Employee employee = employeeDAO.findById(employeeId)
+                .orElseThrow(() -> new ValidationException("Employee not found"));
+
         if (roles == null || roles.isEmpty()) {
             throw new ValidationException("Employee must have at least one role");
         }
@@ -113,10 +119,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateSupervisor(Long employeeId, Long supervisorId) throws ValidationException {
-        Employee employee = employeeDAO.findById(employeeId);
+        Employee employee = employeeDAO.findById(employeeId)
+                .orElseThrow(() -> new ValidationException("Employee not found"));
 
         Employee supervisor = supervisorId != null ?
-                employeeDAO.findById(supervisorId) :
+                employeeDAO.findById(supervisorId)
+                        .orElseThrow(() -> new ValidationException("Supervisor not found")) :
                 null;
 
         employee.setSupervisor(supervisor);
@@ -127,7 +135,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Optional<Employee> findEmployeeById(Long id) {
-        return Optional.ofNullable(employeeDAO.findById(id));
+        return employeeDAO.findById(id);
     }
 
     @Override

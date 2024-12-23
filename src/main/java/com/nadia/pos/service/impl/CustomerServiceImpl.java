@@ -49,7 +49,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer updateCustomer(Customer customer) throws ValidationException {
         // Validate customer exists
-        customerDAO.findById(customer.getId());
+        customerDAO.findById(customer.getId())
+                .orElseThrow(() -> new ValidationException("Customer not found"));
 
         // Validate customer data
         customer.validate();
@@ -65,7 +66,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Customer c) throws ValidationException {
-        Customer customer = customerDAO.findById(c.getId());
+        Customer customer = customerDAO.findById(c.getId())
+                .orElseThrow(() -> new ValidationException("Customer not found"));
+
         if (!customer.getOrders().isEmpty()) {
             throw new ValidationException("Cannot delete customer with existing orders");
         }
@@ -75,7 +78,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Optional<Customer> findCustomerById(Long id) {
-        return Optional.ofNullable(customerDAO.findById(id));
+        return customerDAO.findById(id);
     }
 
     @Override

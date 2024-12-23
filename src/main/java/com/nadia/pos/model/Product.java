@@ -18,7 +18,7 @@ public class Product extends BaseEntity {
     private String barcode;
     private byte[] image;
 
-    public Product(Long productId) {
+    public Product() {
         super();
         this.stockQuantity = 0;
         this.minimumStock = 0;

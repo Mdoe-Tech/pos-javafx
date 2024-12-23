@@ -58,7 +58,7 @@ public class SupplierServiceImpl implements SupplierService {
         supplier.validate();
 
         // Check if supplier exists
-        Optional<Supplier> existingSupplier = Optional.ofNullable(supplierDAO.findById(id));
+        Optional<Supplier> existingSupplier = supplierDAO.findById(id);
         if (existingSupplier.isEmpty()) {
             throw new ValidationException("Supplier with id " + id + " not found");
         }
@@ -102,7 +102,7 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public Optional<Supplier> getSupplier(Long id) throws SQLException {
-        return Optional.ofNullable(supplierDAO.findById(id));
+        return supplierDAO.findById(id);
     }
 
     @Override

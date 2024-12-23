@@ -64,7 +64,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updateStock(Long productId, Integer quantity) throws BusinessException, ValidationException {
-        Product product = productDAO.findById(productId);
+        Product product = productDAO.findById(productId)
+                .orElseThrow(() -> new ValidationException("Product not found"));
+
         // Prevent negative stock
         if (product.getStockQuantity() + quantity < 0) {
             throw new BusinessException("Insufficient stock available");
@@ -77,7 +79,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updatePrice(Long productId, BigDecimal newPrice) throws ValidationException {
-        Product product = productDAO.findById(productId);
+        Product product = productDAO.findById(productId)
+                .orElseThrow(() -> new ValidationException("Product not found"));
+
         if (newPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValidationException("Price must be greater than zero");
         }
@@ -94,7 +98,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<Product> findProductById(Long id) {
-        return Optional.ofNullable(productDAO.findById(id));
+        return productDAO.findById(id);
     }
 
     @Override

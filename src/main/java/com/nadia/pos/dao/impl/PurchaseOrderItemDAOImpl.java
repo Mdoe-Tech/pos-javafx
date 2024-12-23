@@ -53,7 +53,7 @@ public class PurchaseOrderItemDAOImpl extends BaseDAOImpl<PurchaseOrderItem> imp
 
     @Override
     public List<OrderItem> findByPurchaseOrder(Long purchaseOrderId) {
-        List<PurchaseOrderItem> items = new ArrayList<>();
+        List<OrderItem> items = new ArrayList<>();
         String query = "SELECT * FROM purchase_order_items WHERE purchase_order_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, purchaseOrderId);

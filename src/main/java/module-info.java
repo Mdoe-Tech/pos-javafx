@@ -1,4 +1,4 @@
-module com.mdoe.nadiapos {
+module com.nadia.pos {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -11,6 +11,7 @@ module com.mdoe.nadiapos {
     requires eu.hansolo.tilesfx;
     requires java.sql;
     requires com.zaxxer.hikari;
+    requires org.postgresql.jdbc;
 
     opens com.nadia.pos to javafx.fxml;
     exports com.nadia.pos;
@@ -18,5 +19,7 @@ module com.mdoe.nadiapos {
     exports com.nadia.pos.exceptions;
     exports com.nadia.pos.enums;
     exports com.nadia.pos.utils;
+
     opens com.nadia.pos.model to javafx.fxml;
+    opens com.nadia.pos.controller to javafx.fxml;
 }

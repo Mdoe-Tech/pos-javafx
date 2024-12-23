@@ -5,7 +5,6 @@ import com.nadia.pos.dao.CustomerDAO;
 import com.nadia.pos.model.Customer;
 import com.nadia.pos.enums.CustomerType;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,20 +132,6 @@ public class CustomerDAOImpl extends BaseDAOImpl<Customer> implements CustomerDA
             return customers;
         } catch (SQLException e) {
             throw new RuntimeException("Error searching customers by name", e);
-        }
-    }
-
-    @Override
-    public boolean updateCreditBalance(Long customerId, BigDecimal amount) {
-        String query = "UPDATE customers SET current_credit = current_credit + ?, updated_at = NOW() WHERE id = ? " +
-                "AND (current_credit + ?) <= credit_limit";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setBigDecimal(1, amount);
-            stmt.setLong(2, customerId);
-            stmt.setBigDecimal(3, amount);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error updating customer credit balance", e);
         }
     }
 

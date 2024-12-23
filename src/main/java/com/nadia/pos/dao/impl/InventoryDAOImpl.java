@@ -65,7 +65,7 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
         Inventory inventory = new Inventory();
         inventory.setId(rs.getLong("id"));
 
-        Product product = new Product(productId);
+        Product product = new Product();
         product.setId(rs.getLong("product_id"));
         product.setName(rs.getString("product_name"));
         inventory.setProduct(product);

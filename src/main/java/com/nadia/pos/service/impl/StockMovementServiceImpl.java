@@ -38,9 +38,13 @@ public class StockMovementServiceImpl implements StockMovementService {
         movement.validate();
 
         // Load and validate product
-        Product product = productDAO.findById(movement.getProduct().getId());
+        Product product = productDAO.findById(movement.getProduct().getId())
+                .orElseThrow(() -> new ValidationException("Product not found"));
+
         // Load and validate employee
-        Employee employee = employeeDAO.findById(movement.getProcessedBy().getId());
+        Employee employee = employeeDAO.findById(movement.getProcessedBy().getId())
+                .orElseThrow(() -> new ValidationException("Employee not found"));
+
         // Get current inventory
         Inventory inventory = inventoryDAO.findByProduct(product.getId());
         if (inventory == null) {
@@ -79,13 +83,13 @@ public class StockMovementServiceImpl implements StockMovementService {
                                           BigDecimal unitCost, Long processedById, String notes)
             throws ValidationException, SQLException {
         StockMovement movement = new StockMovement();
-        movement.setProduct(new Product(productId));
+        movement.setProduct(new Product());
         movement.setType(StockMovementType.ADJUSTMENT);
         movement.setQuantity(quantity);
         movement.setReferenceNumber(generateReferenceNumber());
         movement.setReason(reason);
         movement.setUnitCost(unitCost);
-        movement.setProcessedBy(new Employee(processedById));
+        movement.setProcessedBy(new Employee());
         movement.setNotes(notes);
 
         return recordMovement(movement);
@@ -100,13 +104,13 @@ public class StockMovementServiceImpl implements StockMovementService {
         }
 
         StockMovement movement = new StockMovement();
-        movement.setProduct(new Product(productId));
+        movement.setProduct(new Product());
         movement.setType(StockMovementType.RECEIPT);
         movement.setQuantity(quantity);
         movement.setReferenceNumber(referenceNumber);
         movement.setReason("Stock Receipt");
         movement.setUnitCost(unitCost);
-        movement.setProcessedBy(new Employee(processedById));
+        movement.setProcessedBy(new Employee());
         movement.setNotes(notes);
 
         return recordMovement(movement);
@@ -121,13 +125,13 @@ public class StockMovementServiceImpl implements StockMovementService {
         }
 
         StockMovement movement = new StockMovement();
-        movement.setProduct(new Product(productId));
+        movement.setProduct(new Product());
         movement.setType(StockMovementType.TRANSFER);
         movement.setQuantity(-quantity); // Negative quantity for outgoing transfer
         movement.setReferenceNumber(referenceNumber);
         movement.setReason(reason);
         movement.setUnitCost(BigDecimal.ZERO); // Transfers don't affect cost
-        movement.setProcessedBy(new Employee(processedById));
+        movement.setProcessedBy(new Employee());
         movement.setNotes(notes);
 
         return recordMovement(movement);
@@ -135,7 +139,7 @@ public class StockMovementServiceImpl implements StockMovementService {
 
     @Override
     public Optional<StockMovement> getMovement(Long id) throws SQLException {
-        return Optional.ofNullable(stockMovementDAO.findById(id));
+        return stockMovementDAO.findById(id);
     }
 
     @Override

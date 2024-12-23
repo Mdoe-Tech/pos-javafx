@@ -63,7 +63,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 
     @Override
     public SalesOrder findById(Long id) {
-        SalesOrder order = salesOrderDAO.findById(id);
+        SalesOrder order = salesOrderDAO.findById(id).orElseThrow(null);
         if (order != null) {
             List<OrderItem> items = salesOrderItemDAO.findBySalesOrder(id);
             order.setItems(items);

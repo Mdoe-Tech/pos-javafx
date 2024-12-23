@@ -17,7 +17,7 @@ public class ProductDAOImpl extends BaseDAOImpl<Product> implements ProductDAO {
 
     @Override
     protected Product mapResultSetToEntity(ResultSet rs) throws SQLException {
-        Product product = new Product(productId);
+        Product product = new Product();
         product.setId(rs.getLong("id"));
         product.setName(rs.getString("name"));
         product.setCode(rs.getString("code"));

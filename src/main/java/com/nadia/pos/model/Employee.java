@@ -25,7 +25,7 @@ public class Employee extends BaseEntity {
     private Set<Role> roles;
     private Employee supervisor;
 
-    public Employee(Long processedById) {
+    public Employee() {
         super();
         this.roles = new HashSet<>();
         this.status = EmployeeStatus.ACTIVE;

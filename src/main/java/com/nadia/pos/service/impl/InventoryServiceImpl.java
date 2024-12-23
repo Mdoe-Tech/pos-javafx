@@ -43,7 +43,7 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.validate();
 
         // Check if inventory exists
-        Optional<Inventory> existingInventory = Optional.ofNullable(inventoryDAO.findById(id));
+        Optional<Inventory> existingInventory = inventoryDAO.findById(id);
         if (!existingInventory.isPresent()) {
             throw new ValidationException("Inventory with id " + id + " not found");
         }
@@ -62,7 +62,7 @@ public class InventoryServiceImpl implements InventoryService {
             throw new ValidationException("Quantity to add must be positive");
         }
 
-        Optional<Inventory> optionalInventory = Optional.ofNullable(inventoryDAO.findById(id));
+        Optional<Inventory> optionalInventory = inventoryDAO.findById(id);
         if (!optionalInventory.isPresent()) {
             throw new ValidationException("Inventory with id " + id + " not found");
         }
@@ -86,7 +86,7 @@ public class InventoryServiceImpl implements InventoryService {
             throw new ValidationException("Quantity to remove must be positive");
         }
 
-        Optional<Inventory> optionalInventory = Optional.ofNullable(inventoryDAO.findById(id));
+        Optional<Inventory> optionalInventory = inventoryDAO.findById(id);
         if (!optionalInventory.isPresent()) {
             throw new ValidationException("Inventory with id " + id + " not found");
         }
@@ -109,7 +109,7 @@ public class InventoryServiceImpl implements InventoryService {
             throw new ValidationException("Actual quantity cannot be negative");
         }
 
-        Optional<Inventory> optionalInventory = Optional.ofNullable(inventoryDAO.findById(id));
+        Optional<Inventory> optionalInventory = inventoryDAO.findById(id);
         if (!optionalInventory.isPresent()) {
             throw new ValidationException("Inventory with id " + id + " not found");
         }
@@ -124,7 +124,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Optional<Inventory> getInventory(Long id) throws SQLException {
-        return Optional.ofNullable(inventoryDAO.findById(id));
+        return inventoryDAO.findById(id);
     }
 
     @Override

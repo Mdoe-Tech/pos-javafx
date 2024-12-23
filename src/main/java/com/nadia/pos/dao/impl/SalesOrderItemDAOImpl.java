@@ -49,13 +49,13 @@ public class SalesOrderItemDAOImpl extends BaseDAOImpl<SalesOrderItem> implement
 
     @Override
     public List<OrderItem> findBySalesOrder(Long salesOrderId) {
-        List<SalesOrderItem> items = new ArrayList<>();
+        List<OrderItem> items = new ArrayList<>();
         String query = "SELECT * FROM sales_order_items WHERE sales_order_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, salesOrderId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                items.add(mapResultSetToEntity(rs));
+                items.add(mapResultSetToEntity(rs));  // SalesOrderItem should implement OrderItem
             }
             return items;
         } catch (SQLException e) {

@@ -108,7 +108,7 @@ public class StockMovementDAOImpl extends BaseDAOImpl<StockMovement> implements 
         StockMovement movement = new StockMovement();
         movement.setId(rs.getLong("id"));
 
-        Product product = new Product(productId);
+        Product product = new Product();
         product.setId(rs.getLong("product_id"));
         product.setName(rs.getString("product_name"));
         movement.setProduct(product);
@@ -119,7 +119,7 @@ public class StockMovementDAOImpl extends BaseDAOImpl<StockMovement> implements 
         movement.setReason(rs.getString("reason"));
         movement.setUnitCost(rs.getBigDecimal("unit_cost"));
 
-        Employee employee = new Employee(processedById);
+        Employee employee = new Employee();
         employee.setId(rs.getLong("processed_by_id"));
         employee.setFirstName(rs.getString("first_name"));
         employee.setLastName(rs.getString("last_name"));

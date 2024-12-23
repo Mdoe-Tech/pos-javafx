@@ -11,6 +11,7 @@ import com.nadia.pos.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,10 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
     public T createOrder(T order) throws ValidationException {
         // Validate order data
         order.validate();
+
+        // Validate employee
+        Employee employee = employeeDAO.findById(order.getCreatedBy().getId())
+                .orElseThrow(() -> new ValidationException("Employee not found"));
 
         // Validate and process order items
         validateOrderItems(order.getItems());
@@ -149,7 +154,7 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
 
     @Override
     public Optional<T> getOrder(Long id) {
-        return Optional.ofNullable(orderDAO.findById(id));
+        return orderDAO.findById(id);
     }
 
     @Override
@@ -211,6 +216,8 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
     protected void validateOrderItems(List<OrderItem> items) throws ValidationException {
         for (OrderItem item : items) {
             item.validate();
+            Product product = productDAO.findById(item.getProduct().getId())
+                    .orElseThrow(() -> new ValidationException("Product not found: " + item.getProduct().getId()));
         }
     }
 

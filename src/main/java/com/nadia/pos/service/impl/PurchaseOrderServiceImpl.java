@@ -63,7 +63,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     public PurchaseOrder findById(Long id) {
-        PurchaseOrder order = purchaseOrderDAO.findById(id);
+        PurchaseOrder order = purchaseOrderDAO.findById(id).orElseThrow(null);
         if (order != null) {
             List<OrderItem> items = purchaseOrderItemDAO.findByPurchaseOrder(id);
             order.setItems(items);

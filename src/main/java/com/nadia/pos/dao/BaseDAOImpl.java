@@ -1,7 +1,6 @@
 package com.nadia.pos.dao;
 
 import com.nadia.pos.model.BaseEntity;
-import com.nadia.pos.model.PurchaseOrder;
 import com.nadia.pos.utils.DatabaseUtil;
 
 import java.sql.*;
@@ -59,7 +58,7 @@ public abstract class BaseDAOImpl<T extends BaseEntity> implements BaseDAO<T> {
     }
 
     @Override
-    public PurchaseOrder findById(Long id) {
+    public Optional<T> findById(Long id) {
         String query = "SELECT * FROM " + tableName + " WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, id);
@@ -75,7 +74,7 @@ public abstract class BaseDAOImpl<T extends BaseEntity> implements BaseDAO<T> {
 
     @Override
     public List<T> findAll() {
-        List<T> entities = new ArrayList<>();
+        List<T> entities = new ArrayList<T>();
         String query = "SELECT * FROM " + tableName;
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {

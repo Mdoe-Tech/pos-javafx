@@ -27,6 +27,10 @@ public abstract class AbstractPaymentServiceImpl<T extends Payment> implements P
         // Validate payment data
         payment.validate();
 
+        // Validate employee
+        Employee employee = employeeDAO.findById(payment.getProcessedBy().getId())
+                .orElseThrow(() -> new ValidationException("Employee not found"));
+
         // Set timestamps
         LocalDateTime now = LocalDateTime.now();
         payment.setCreatedAt(now);
@@ -61,7 +65,7 @@ public abstract class AbstractPaymentServiceImpl<T extends Payment> implements P
 
     @Override
     public Optional<T> getPayment(Long id) {
-        return Optional.ofNullable(paymentDAO.findById(id));
+        return paymentDAO.findById(id);
     }
 
     @Override
