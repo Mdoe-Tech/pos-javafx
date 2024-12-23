@@ -65,7 +65,7 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
         Inventory inventory = new Inventory();
         inventory.setId(rs.getLong("id"));
 
-        Product product = new Product();
+        Product product = new Product(productId);
         product.setId(rs.getLong("product_id"));
         product.setName(rs.getString("product_name"));
         inventory.setProduct(product);
@@ -111,7 +111,7 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
     }
 
     @Override
-    public void update(Inventory inventory) {
+    public Inventory update(Inventory inventory) {
         String query = getUpdateQuery();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             setStatementParameters(stmt, inventory);
@@ -120,6 +120,7 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     @Override

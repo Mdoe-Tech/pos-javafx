@@ -2,6 +2,7 @@ package com.nadia.pos.dao.impl;
 
 import com.nadia.pos.dao.BaseDAOImpl;
 import com.nadia.pos.dao.PurchaseOrderItemDAO;
+import com.nadia.pos.model.OrderItem;
 import com.nadia.pos.model.PurchaseOrderItem;
 
 import java.sql.*;
@@ -51,7 +52,7 @@ public class PurchaseOrderItemDAOImpl extends BaseDAOImpl<PurchaseOrderItem> imp
     }
 
     @Override
-    public List<PurchaseOrderItem> findByPurchaseOrder(Long purchaseOrderId) {
+    public List<OrderItem> findByPurchaseOrder(Long purchaseOrderId) {
         List<PurchaseOrderItem> items = new ArrayList<>();
         String query = "SELECT * FROM purchase_order_items WHERE purchase_order_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {

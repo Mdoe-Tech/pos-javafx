@@ -18,7 +18,7 @@ public class EmployeeDAOImpl extends BaseDAOImpl<Employee> implements EmployeeDA
 
     @Override
     protected Employee mapResultSetToEntity(ResultSet rs) throws SQLException {
-        Employee employee = new Employee();
+        Employee employee = new Employee(processedById);
         employee.setId(rs.getLong("id"));
         employee.setEmployeeId(rs.getString("employee_id"));
         employee.setFirstName(rs.getString("first_name"));

@@ -44,7 +44,7 @@ public class PurchaseOrderDAOImpl extends BaseDAOImpl<PurchaseOrder> implements 
         stmt.setTimestamp(2, Timestamp.valueOf(order.getExpectedDeliveryDate()));
         stmt.setString(3, order.getShippingTerms());
         stmt.setString(4, order.getPaymentTerms());
-        stmt.setString(5, order.getStatus());
+        stmt.setString(5, String.valueOf(order.getStatus()));
         stmt.setBigDecimal(6, order.getTotalAmount());
         stmt.setBigDecimal(7, order.getTax());
         stmt.setBigDecimal(8, order.getDiscount());

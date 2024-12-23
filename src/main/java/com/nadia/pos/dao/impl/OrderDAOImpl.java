@@ -26,7 +26,7 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
         stmt.setBigDecimal(4, order.getTax());
         stmt.setBigDecimal(5, order.getDiscount());
         stmt.setString(6, order.getNotes());
-        stmt.setString(7, order.getStatus());
+        stmt.setString(7, String.valueOf(order.getStatus()));
         stmt.setLong(8, order.getCreatedBy().getId());
         stmt.setTimestamp(9, Timestamp.valueOf(order.getUpdatedAt()));
     }

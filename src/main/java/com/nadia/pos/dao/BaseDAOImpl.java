@@ -1,6 +1,7 @@
 package com.nadia.pos.dao;
 
 import com.nadia.pos.model.BaseEntity;
+import com.nadia.pos.model.PurchaseOrder;
 import com.nadia.pos.utils.DatabaseUtil;
 
 import java.sql.*;
@@ -46,7 +47,7 @@ public abstract class BaseDAOImpl<T extends BaseEntity> implements BaseDAO<T> {
     }
 
     @Override
-    public void update(T entity) {
+    public T update(T entity) {
         try (PreparedStatement stmt = connection.prepareStatement(getUpdateQuery())) {
             setStatementParameters(stmt, entity);
             stmt.setLong(stmt.getParameterMetaData().getParameterCount(), entity.getId());
@@ -54,10 +55,11 @@ public abstract class BaseDAOImpl<T extends BaseEntity> implements BaseDAO<T> {
         } catch (SQLException e) {
             throw new RuntimeException("Error updating entity in " + tableName, e);
         }
+        return null;
     }
 
     @Override
-    public Optional<T> findById(Long id) {
+    public PurchaseOrder findById(Long id) {
         String query = "SELECT * FROM " + tableName + " WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, id);

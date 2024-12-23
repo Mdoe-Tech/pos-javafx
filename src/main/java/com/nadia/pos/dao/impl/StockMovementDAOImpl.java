@@ -91,7 +91,7 @@ public class StockMovementDAOImpl extends BaseDAOImpl<StockMovement> implements 
     }
 
     @Override
-    public void update(StockMovement movement) {
+    public StockMovement update(StockMovement movement) {
         String query = getUpdateQuery();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             setStatementParameters(stmt, movement);
@@ -100,6 +100,7 @@ public class StockMovementDAOImpl extends BaseDAOImpl<StockMovement> implements 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class StockMovementDAOImpl extends BaseDAOImpl<StockMovement> implements 
         StockMovement movement = new StockMovement();
         movement.setId(rs.getLong("id"));
 
-        Product product = new Product();
+        Product product = new Product(productId);
         product.setId(rs.getLong("product_id"));
         product.setName(rs.getString("product_name"));
         movement.setProduct(product);
@@ -118,7 +119,7 @@ public class StockMovementDAOImpl extends BaseDAOImpl<StockMovement> implements 
         movement.setReason(rs.getString("reason"));
         movement.setUnitCost(rs.getBigDecimal("unit_cost"));
 
-        Employee employee = new Employee();
+        Employee employee = new Employee(processedById);
         employee.setId(rs.getLong("processed_by_id"));
         employee.setFirstName(rs.getString("first_name"));
         employee.setLastName(rs.getString("last_name"));
