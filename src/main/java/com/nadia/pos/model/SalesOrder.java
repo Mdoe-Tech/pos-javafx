@@ -1,5 +1,7 @@
 package com.nadia.pos.model;
 
+import com.nadia.pos.enums.SalesType;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

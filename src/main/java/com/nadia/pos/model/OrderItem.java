@@ -41,7 +41,7 @@ public abstract class OrderItem extends BaseEntity {
         this.product = product;
     }
 
-    public Integer getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 

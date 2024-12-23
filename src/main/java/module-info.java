@@ -9,6 +9,8 @@ module com.mdoe.nadiapos {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.sql;
+    requires com.zaxxer.hikari;
 
     opens com.nadia.pos to javafx.fxml;
     exports com.nadia.pos;

@@ -13,7 +13,7 @@ public class Customer extends BaseEntity {
     private String phone;
     private String email;
     private String address;
-    private CustomerType type; // RETAIL, WHOLESALE
+    private CustomerType type;
     private BigDecimal creditLimit;
     private BigDecimal currentCredit;
     private List<Order> orders;
