@@ -15,5 +15,8 @@ module com.mdoe.nadiapos {
     opens com.nadia.pos to javafx.fxml;
     exports com.nadia.pos;
     exports com.nadia.pos.model;
+    exports com.nadia.pos.exceptions;
+    exports com.nadia.pos.enums;
+    exports com.nadia.pos.utils;
     opens com.nadia.pos.model to javafx.fxml;
 }

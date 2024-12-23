@@ -1,4 +1,4 @@
-package com.nadia.pos.util;
+package com.nadia.pos.utils;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

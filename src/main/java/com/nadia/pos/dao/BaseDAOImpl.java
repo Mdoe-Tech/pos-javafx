@@ -1,7 +1,7 @@
 package com.nadia.pos.dao;
 
 import com.nadia.pos.model.BaseEntity;
-import com.nadia.pos.util.DatabaseUtil;
+import com.nadia.pos.utils.DatabaseUtil;
 
 import java.sql.*;
 import java.util.ArrayList;

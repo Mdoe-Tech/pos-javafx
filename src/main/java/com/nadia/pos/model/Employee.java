@@ -3,6 +3,7 @@ package com.nadia.pos.model;
 import com.nadia.pos.enums.EmployeeStatus;
 import com.nadia.pos.exceptions.ValidationException;
 
+import java.security.Permission;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
