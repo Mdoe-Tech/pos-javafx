@@ -10,8 +10,8 @@ module com.mdoe.nadiapos {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens com.mdoe.nadiapos to javafx.fxml;
-    exports com.mdoe.nadiapos;
-    exports com.mdoe.nadiapos.model;
-    opens com.mdoe.nadiapos.model to javafx.fxml;
+    opens com.nadia.pos to javafx.fxml;
+    exports com.nadia.pos;
+    exports com.nadia.pos.model;
+    opens com.nadia.pos.model to javafx.fxml;
 }
