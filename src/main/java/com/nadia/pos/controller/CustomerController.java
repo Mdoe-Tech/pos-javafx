@@ -7,35 +7,36 @@ import com.nadia.pos.exceptions.ValidationException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class CustomerController implements Initializable {
-    private final CustomerService customerService;
-
+    @FXML private Button refreshButton;
     @FXML private TableView<Customer> customerTable;
     @FXML private TableColumn<Customer, String> codeColumn;
     @FXML private TableColumn<Customer, String> nameColumn;
     @FXML private TableColumn<Customer, String> phoneColumn;
     @FXML private TableColumn<Customer, String> emailColumn;
     @FXML private TableColumn<Customer, CustomerType> typeColumn;
+    @FXML private TableColumn<Customer, Void> actionsColumn;
 
+    @FXML private TextField searchField;
     @FXML private TextField codeField;
     @FXML private TextField nameField;
     @FXML private TextField phoneField;
     @FXML private TextField emailField;
     @FXML private ComboBox<CustomerType> typeComboBox;
     @FXML private TextField creditLimitField;
-    @FXML private TextField searchField;
-
     @FXML private Button saveButton;
     @FXML private Button clearButton;
-    @FXML private Button deleteButton;
 
+    private final CustomerService customerService;
     private Customer selectedCustomer;
 
     public CustomerController(CustomerService customerService) {
@@ -46,97 +47,120 @@ public class CustomerController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         setupTable();
         setupControls();
+        setupValidation();
         loadCustomers();
-
-        // Setup search functionality
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.trim().isEmpty()) {
-                loadCustomers();
-            } else {
-                customerTable.setItems(FXCollections.observableArrayList(
-                        customerService.searchCustomers(newValue)
-                ));
-            }
-        });
     }
 
     private void setupTable() {
+        setupTableColumns();
+        setupActionColumn();
+        setupTableSelection();
+    }
+
+    private void setupTableColumns() {
         codeColumn.setCellValueFactory(new PropertyValueFactory<>("code"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+    }
 
+    private void setupActionColumn() {
+        actionsColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button editBtn = new Button("Edit");
+            private final Button deleteBtn = new Button("Delete");
+            private final HBox actions = new HBox(5, editBtn, deleteBtn);
+
+            {
+                actions.setAlignment(Pos.CENTER);
+                editBtn.setOnAction(e -> handleEdit(getTableRow().getItem()));
+                deleteBtn.setOnAction(e -> handleDelete(getTableRow().getItem()));
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : actions);
+            }
+        });
+    }
+
+    private void setupTableSelection() {
         customerTable.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) -> {
-                    selectedCustomer = newSelection;
-                    populateFields(newSelection);
-                    deleteButton.setDisable(newSelection == null);
-                }
+                (obs, old, newSelection) -> populateFields(newSelection)
         );
     }
 
     private void setupControls() {
         typeComboBox.setItems(FXCollections.observableArrayList(CustomerType.values()));
-        clearFields();
+        searchField.textProperty().addListener((obs, old, newValue) ->
+                customerTable.setItems(FXCollections.observableArrayList(
+                        customerService.searchCustomers(newValue.trim())
+                ))
+        );
+        refreshButton.setOnAction(e -> loadCustomers());
+    }
+
+    private void setupValidation() {
+        saveButton.disableProperty().bind(
+                nameField.textProperty().isEmpty()
+                        .or(phoneField.textProperty().isEmpty())
+                        .or(typeComboBox.valueProperty().isNull())
+        );
+    }
+
+    private void handleEdit(Customer customer) {
+        selectedCustomer = customer;
+        populateFields(customer);
     }
 
     @FXML
     private void handleSave() {
         try {
-            Customer customer = new Customer();
-            if (selectedCustomer != null) {
-                customer.setId(selectedCustomer.getId());
-            }
-
-            customer.setCode(codeField.getText());
-            customer.setName(nameField.getText());
-            customer.setPhone(phoneField.getText());
-            customer.setEmail(emailField.getText());
-            customer.setType(typeComboBox.getValue());
-            customer.setCreditLimit(new BigDecimal(creditLimitField.getText().isEmpty() ? "0" : creditLimitField.getText()));
-
+            Customer customer = createCustomerFromFields();
             if (selectedCustomer == null) {
                 customerService.createCustomer(customer);
             } else {
+                customer.setId(selectedCustomer.getId());
                 customerService.updateCustomer(customer);
             }
 
-            loadCustomers();
             clearFields();
-            showAlert(Alert.AlertType.INFORMATION, "Success",
-                    "Customer " + (selectedCustomer == null ? "created" : "updated") + " successfully!");
+            loadCustomers();
+            showSuccess("Customer " + (selectedCustomer == null ? "created" : "updated"));
 
-        } catch (ValidationException e) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", e.getMessage());
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Input Error", "Please enter a valid credit limit");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "An unexpected error occurred: " + e.getMessage());
+            showError(e);
         }
     }
 
-    @FXML
-    private void handleDelete() {
-        if (selectedCustomer == null) return;
+    private Customer createCustomerFromFields() {
+        Customer customer = new Customer();
+        customer.setCode(codeField.getText());
+        customer.setName(nameField.getText());
+        customer.setPhone(phoneField.getText());
+        customer.setEmail(emailField.getText());
+        customer.setType(typeComboBox.getValue());
+        customer.setCreditLimit(new BigDecimal(creditLimitField.getText().isEmpty() ? "0" : creditLimitField.getText()));
+        return customer;
+    }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Delete");
-        alert.setHeaderText("Delete Customer");
-        alert.setContentText("Are you sure you want to delete this customer?");
+    private void handleDelete(Customer customer) {
+        if (customer == null) return;
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    customerService.deleteCustomer(selectedCustomer);
-                    loadCustomers();
-                    clearFields();
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Customer deleted successfully!");
-                } catch (ValidationException e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
-                }
-            }
-        });
+        new Alert(Alert.AlertType.CONFIRMATION, "Delete customer " + customer.getName() + "?")
+                .showAndWait()
+                .filter(r -> r == ButtonType.OK)
+                .ifPresent(r -> {
+                    try {
+                        customerService.deleteCustomer(customer);
+                        loadCustomers();
+                        clearFields();
+                        showSuccess("Customer deleted");
+                    } catch (Exception e) {
+                        showError(e);
+                    }
+                });
     }
 
     @FXML
@@ -144,10 +168,14 @@ public class CustomerController implements Initializable {
         clearFields();
     }
 
-    private void loadCustomers() {
-        customerTable.setItems(FXCollections.observableArrayList(
-                customerService.searchCustomers("")
-        ));
+    private void clearFields() {
+        selectedCustomer = null;
+        codeField.clear();
+        nameField.clear();
+        phoneField.clear();
+        emailField.clear();
+        typeComboBox.setValue(null);
+        creditLimitField.clear();
     }
 
     private void populateFields(Customer customer) {
@@ -164,22 +192,19 @@ public class CustomerController implements Initializable {
         creditLimitField.setText(customer.getCreditLimit().toString());
     }
 
-    private void clearFields() {
-        selectedCustomer = null;
-        codeField.clear();
-        nameField.clear();
-        phoneField.clear();
-        emailField.clear();
-        typeComboBox.setValue(CustomerType.RETAIL);
-        creditLimitField.clear();
-        deleteButton.setDisable(true);
+    private void loadCustomers() {
+        customerTable.setItems(FXCollections.observableArrayList(
+                customerService.searchCustomers("")
+        ));
     }
 
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private void showSuccess(String message) {
+        new Alert(Alert.AlertType.INFORMATION, message).show();
+    }
+
+    private void showError(Exception e) {
+        String message = e instanceof ValidationException ?
+                e.getMessage() : "An unexpected error occurred";
+        new Alert(Alert.AlertType.ERROR, message).show();
     }
 }

@@ -10,11 +10,10 @@ public class PurchaseOrder extends Order {
     private String paymentTerms;
 
     @Override
-    public BigDecimal calculateTotal() {
+    public void calculateTotal() {
         totalAmount = items.stream()
                 .map(item -> ((PurchaseOrderItem)item).getSubtotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return totalAmount.add(tax).subtract(discount);
     }
 
     // Additional methods and Getters/Setters...

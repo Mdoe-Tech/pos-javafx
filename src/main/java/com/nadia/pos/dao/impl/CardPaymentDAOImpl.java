@@ -15,7 +15,7 @@ import java.util.Optional;
 public class CardPaymentDAOImpl extends PaymentDAOImpl<CardPayment> implements CardPaymentDAO {
 
     public CardPaymentDAOImpl() throws SQLException {
-        super("card_payments");
+        super();
     }
 
     @Override

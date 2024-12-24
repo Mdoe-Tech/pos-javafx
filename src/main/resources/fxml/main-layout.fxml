@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<?import java.net.URL?>
+<HBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox styleClass="sidebar" prefWidth="250" spacing="15" style="-fx-background-color: linear-gradient(to bottom, #2c3e50, #2c3e50);">
+        <padding>
+            <Insets top="25" right="15" bottom="25" left="15"/>
+        </padding>
+
+        <Label text="POS SYSTEM" style="-fx-text-fill: white; -fx-font-size: 26px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI';" />
+        <Separator style="-fx-background-color: #34495e; -fx-opacity: 0.6;"/>
+
+        <Button fx:id="dashboardBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-chart-line" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Dashboard</text>
+        </Button>
+
+        <Button fx:id="posBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-cash-register" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Point of Sale</text>
+        </Button>
+
+        <Button fx:id="customersBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-users" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Customers</text>
+        </Button>
+
+        <Button fx:id="productsBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-boxes" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Products</text>
+        </Button>
+
+        <Button fx:id="inventoryBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-warehouse" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Inventory</text>
+        </Button>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <Button fx:id="settingsBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-cog" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Settings</text>
+        </Button>
+    </VBox>
+
+    <StackPane fx:id="contentArea" HBox.hgrow="ALWAYS" style="-fx-background-color: #f4f6f8;">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+    </StackPane>
+
+    <stylesheets>
+        <URL value="@../styles/main.css" />
+    </stylesheets>
+</HBox>

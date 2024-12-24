@@ -30,7 +30,7 @@ public abstract class Order extends BaseEntity {
         this.status = OrderStatus.PENDING;
     }
 
-    public abstract BigDecimal calculateTotal();
+    public abstract void calculateTotal();
 
     @Override
     public void validate() throws ValidationException {

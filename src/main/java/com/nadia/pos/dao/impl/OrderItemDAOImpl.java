@@ -11,10 +11,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class OrderItemDAOImpl<T extends OrderItem> extends BaseDAOImpl<T> implements OrderItemDAO<T> {
+public class OrderItemDAOImpl<T extends OrderItem> extends BaseDAOImpl<T> implements OrderItemDAO<T> {
+    private static final String TABLE_NAME = "order_items";
 
-    protected OrderItemDAOImpl() throws SQLException {
-        super("order_items");
+    public OrderItemDAOImpl() throws SQLException {
+        super(TABLE_NAME);
+    }
+
+    @Override
+    protected T mapResultSetToEntity(ResultSet rs) throws SQLException {
+        return null;
     }
 
     @Override

@@ -1,0 +1,33 @@
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI";
+    -fx-alignment: center-left;
+    -fx-padding: 10 15;
+    -fx-graphic-text-gap: 15;
+    -fx-cursor: hand;
+    -fx-min-width: 220;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255, 159, 67, 0.2);
+    -fx-background-radius: 5;
+}
+
+.nav-button:pressed {
+    -fx-background-color: rgba(255, 159, 67, 0.3);
+}
+
+.sidebar {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 0);
+}
+
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('../fonts/RobotoMono-Regular.ttf');
+}
+
+* {
+    -fx-font-family: 'Roboto Mono';
+}

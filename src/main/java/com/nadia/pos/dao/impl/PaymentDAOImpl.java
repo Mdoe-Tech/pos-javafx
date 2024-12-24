@@ -11,14 +11,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class PaymentDAOImpl<T extends Payment> extends BaseDAOImpl<T> implements PaymentDAO<T> {
+public class PaymentDAOImpl<T extends Payment> extends BaseDAOImpl<T> implements PaymentDAO<T> {
+    private static final String TABLE_NAME = "payments";
 
-    protected PaymentDAOImpl(String tableName) throws SQLException {
-        super(tableName);
+    public PaymentDAOImpl() throws SQLException {
+        super(TABLE_NAME);
     }
 
     @Override
-    protected abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
+    protected T mapResultSetToEntity(ResultSet rs) throws SQLException {
+        return null;
+    }
+
+    @Override
+    protected void setStatementParameters(PreparedStatement stmt, T entity) throws SQLException {
+
+    }
+
+    @Override
+    protected String getInsertQuery() {
+        return "";
+    }
+
+    @Override
+    protected String getUpdateQuery() {
+        return "";
+    }
 
     @Override
     public List<T> findByStatus(PaymentStatus status) {

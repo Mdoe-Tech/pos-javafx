@@ -16,7 +16,7 @@ import java.util.List;
 public class CashPaymentDAOImpl extends PaymentDAOImpl<CashPayment> implements CashPaymentDAO {
 
     public CashPaymentDAOImpl() throws SQLException {
-        super("cash_payments");
+        super();
     }
 
     @Override

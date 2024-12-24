@@ -12,11 +12,10 @@ public class SalesOrder extends Order {
     private LocalDateTime deliveryDate;
 
     @Override
-    public BigDecimal calculateTotal() {
+    public void calculateTotal() {
         totalAmount = items.stream()
                 .map(item -> ((SalesOrderItem)item).getSubtotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return totalAmount.add(tax).subtract(discount);
     }
 
     public Customer getCustomer() {

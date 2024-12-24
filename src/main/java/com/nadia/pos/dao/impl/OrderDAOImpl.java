@@ -12,10 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> implements OrderDAO<T> {
+public class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> implements OrderDAO<T> {
+    private static final String TABLE_NAME = "orders";
 
-    protected OrderDAOImpl(String tableName) throws SQLException {
-        super(tableName);
+    public OrderDAOImpl() throws SQLException {
+        super(TABLE_NAME);
     }
 
     @Override
@@ -33,21 +34,19 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
 
     @Override
     protected String getInsertQuery() {
-        return "INSERT INTO " + tableName +
-                " (order_number, order_date, total_amount, tax, discount, notes, status, created_by, " +
+        return "INSERT INTO orders (order_number, order_date, total_amount, tax, discount, notes, status, created_by, " +
                 "updated_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
     }
 
     @Override
     protected String getUpdateQuery() {
-        return "UPDATE " + tableName +
-                " SET order_number=?, order_date=?, total_amount=?, tax=?, discount=?, notes=?, " +
+        return "UPDATE orders SET order_number=?, order_date=?, total_amount=?, tax=?, discount=?, notes=?, " +
                 "status=?, created_by=?, updated_at=? WHERE id=?";
     }
 
     @Override
     public Optional<T> findByOrderNumber(String orderNumber) {
-        String query = "SELECT * FROM " + tableName + " WHERE order_number = ?";
+        String query = "SELECT * FROM orders WHERE order_number = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, orderNumber);
             ResultSet rs = stmt.executeQuery();
@@ -63,7 +62,7 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
     @Override
     public List<T> findByDateRange(LocalDateTime start, LocalDateTime end) {
         List<T> orders = new ArrayList<>();
-        String query = "SELECT * FROM " + tableName + " WHERE order_date BETWEEN ? AND ?";
+        String query = "SELECT * FROM orders WHERE order_date BETWEEN ? AND ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setTimestamp(1, Timestamp.valueOf(start));
             stmt.setTimestamp(2, Timestamp.valueOf(end));
@@ -80,7 +79,7 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
     @Override
     public List<T> findByStatus(OrderStatus status) {
         List<T> orders = new ArrayList<>();
-        String query = "SELECT * FROM " + tableName + " WHERE status = ?";
+        String query = "SELECT * FROM orders WHERE status = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, status.name());
             ResultSet rs = stmt.executeQuery();
@@ -96,7 +95,7 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
     @Override
     public List<T> findByEmployee(Long employeeId) {
         List<T> orders = new ArrayList<>();
-        String query = "SELECT * FROM " + tableName + " WHERE created_by = ?";
+        String query = "SELECT * FROM orders WHERE created_by = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, employeeId);
             ResultSet rs = stmt.executeQuery();
@@ -111,7 +110,7 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
 
     protected void saveOrderItems(Long orderId, List<OrderItem> items) {
         String query = "INSERT INTO order_items (order_id, product_id, quantity, unit_price, " +
-                "subtotal, discount) VALUES (?, ?, ?, ?, ?, ?)";
+                "discount) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             for (OrderItem item : items) {
                 stmt.setLong(1, orderId);
@@ -143,5 +142,13 @@ public abstract class OrderDAOImpl<T extends Order> extends BaseDAOImpl<T> imple
         }
     }
 
-    protected abstract OrderItem mapResultSetToOrderItem(ResultSet rs) throws SQLException;
+    protected T mapResultSetToEntity(ResultSet rs) throws SQLException {
+        // Implementation would go here - likely moved to specific subclasses
+        return null;
+    }
+
+    protected OrderItem mapResultSetToOrderItem(ResultSet rs) throws SQLException {
+        // Implementation would go here - likely moved to specific subclasses
+        return null;
+    }
 }

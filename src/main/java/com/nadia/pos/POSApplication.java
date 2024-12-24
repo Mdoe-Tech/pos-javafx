@@ -1,42 +1,45 @@
 package com.nadia.pos;
 
-import com.nadia.pos.dao.CustomerDAO;
-import com.nadia.pos.dao.impl.CustomerDAOImpl;
-import com.nadia.pos.service.CustomerService;
-import com.nadia.pos.service.impl.CustomerServiceImpl;
+import com.nadia.pos.config.DependencyConfig;
 import com.nadia.pos.controller.CustomerController;
+import com.nadia.pos.controller.MainController;
+import com.nadia.pos.utils.SceneManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 public class POSApplication extends Application {
-    public static void main(String[] args) {
-        launch();
-    }
+    private SceneManager sceneManager;
+    private DependencyConfig dependencies;
 
     @Override
-    public void start(Stage stage) throws IOException, SQLException {
-        // Initialize dependencies
-        CustomerDAO customerDAO = new CustomerDAOImpl();
-        CustomerService customerService = new CustomerServiceImpl(customerDAO);
-        CustomerController controller = new CustomerController(customerService);
+    public void start(Stage stage) {
+        try {
+            dependencies = DependencyConfig.getInstance();
+            sceneManager = new SceneManager(stage);
 
-        // Load FXML
-        FXMLLoader fxmlLoader = new FXMLLoader(POSApplication.class.getResource("customer-view.fxml"));
-        fxmlLoader.setController(controller);
+            initializeScenes();
 
-        // Set up the scene
-        Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 800, 600);
+            stage.setTitle("POS System");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
-        // Configure and show the stage
-        stage.setTitle("POS System - Customer Management");
-        stage.setScene(scene);
-        stage.show();
+    private void initializeScenes() throws Exception {
+        CustomerController customerController = new CustomerController(dependencies.getCustomerService());
+        MainController mainController = new MainController(sceneManager);
+
+        sceneManager.loadScene("main", "/fxml/main-layout.fxml", mainController);
+        sceneManager.loadView("customers", "/fxml/customer-view.fxml", customerController);
+
+        sceneManager.switchScene("main");
+
+        mainController.loadView("customers");
+    }
+
+    public static void main(String[] args) {
+        launch();
     }
 }
