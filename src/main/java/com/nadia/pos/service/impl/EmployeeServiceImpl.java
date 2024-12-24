@@ -148,6 +148,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDAO.findByDepartment(department);
     }
 
+    @Override
+    public List<Employee> findAllEmployees() {
+        return employeeDAO.findAll();
+    }
+
     private void validateUniqueness(Employee employee) throws ValidationException {
         // Check unique employeeId
         if (employeeDAO.findByEmployeeId(employee.getEmployeeId()).isPresent()) {

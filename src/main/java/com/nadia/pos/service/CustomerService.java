@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
-    Customer createCustomer(Customer customer) throws ValidationException;
+    void createCustomer(Customer customer) throws ValidationException;
 
-    Customer updateCustomer(Customer customer) throws ValidationException;
+    void updateCustomer(Customer customer) throws ValidationException;
 
     void deleteCustomer(Customer id) throws ValidationException;
 

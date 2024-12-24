@@ -5,6 +5,7 @@ import com.nadia.pos.exceptions.ValidationException;
 import java.math.BigDecimal;
 
 public abstract class OrderItem extends BaseEntity {
+    protected Long salesOrderId;
     protected Product product;
     protected Integer quantity;
     protected BigDecimal unitPrice;
@@ -35,6 +36,14 @@ public abstract class OrderItem extends BaseEntity {
 
     public Product getProduct() {
         return product;
+    }
+
+    public Long getSalesOrderId() {
+        return salesOrderId;
+    }
+
+    public void setSalesOrderId(Long salesOrderId) {
+        this.salesOrderId = salesOrderId;
     }
 
     public void setProduct(Product product) {

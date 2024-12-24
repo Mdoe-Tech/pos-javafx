@@ -1,7 +1,6 @@
 package com.nadia.pos.dao;
 
 import com.nadia.pos.model.BaseEntity;
-import com.nadia.pos.model.PurchaseOrder;
 
 import java.util.List;
 import java.util.Optional;

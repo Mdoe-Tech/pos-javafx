@@ -20,7 +20,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer createCustomer(Customer customer) throws ValidationException {
+    public void createCustomer(Customer customer) throws ValidationException {
         // Validate customer data
         customer.validate();
 
@@ -43,11 +43,11 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setCreatedAt(now);
         customer.setUpdatedAt(now);
 
-        return customerDAO.save(customer);
+        customerDAO.save(customer);
     }
 
     @Override
-    public Customer updateCustomer(Customer customer) throws ValidationException {
+    public void updateCustomer(Customer customer) throws ValidationException {
         // Validate customer exists
         customerDAO.findById(customer.getId())
                 .orElseThrow(() -> new ValidationException("Customer not found"));
@@ -61,7 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
         // Update timestamp
         customer.setUpdatedAt(LocalDateTime.now());
 
-        return customerDAO.update(customer);
+        customerDAO.update(customer);
     }
 
     @Override

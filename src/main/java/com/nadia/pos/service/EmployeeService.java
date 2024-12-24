@@ -27,4 +27,6 @@ public interface EmployeeService {
     Optional<Employee> findEmployeeByEmployeeId(String employeeId);
 
     List<Employee> findEmployeesByDepartment(String department);
+
+    List<Employee> findAllEmployees();
 }

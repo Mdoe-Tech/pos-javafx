@@ -29,17 +29,18 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         order.setUpdatedAt(LocalDateTime.now());
         order.calculateTotal();
 
+        // Save the order first to get its ID
         SalesOrder savedOrder = salesOrderDAO.save(order);
+        order.setId(savedOrder.getId());
 
-        // Save order items
         if (order.getItems() != null) {
             for (OrderItem item : order.getItems()) {
+                item.setSalesOrderId(savedOrder.getId());
                 item.setCreatedAt(LocalDateTime.now());
                 item.setUpdatedAt(LocalDateTime.now());
                 salesOrderItemDAO.save((SalesOrderItem) item);
             }
         }
-
     }
 
     @Override
@@ -58,6 +59,19 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         order.setUpdatedAt(LocalDateTime.now());
         order.calculateTotal();
         salesOrderDAO.update(order);
+
+        // Update or create items
+        for (OrderItem item : order.getItems()) {
+            item.setSalesOrderId(order.getId());
+            item.setUpdatedAt(LocalDateTime.now());
+
+            if (item.getId() == null) {
+                item.setCreatedAt(LocalDateTime.now());
+                salesOrderItemDAO.save((SalesOrderItem) item);
+            } else {
+                salesOrderItemDAO.update((SalesOrderItem) item);
+            }
+        }
     }
 
     @Override

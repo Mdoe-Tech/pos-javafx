@@ -162,7 +162,7 @@ public class OrderController {
             return;
         }
 
-        if (confirmDialog("Delete Order", "Are you sure you want to delete this order?")) {
+        if (confirmDialog()) {
             try {
                 orderService.updateOrderStatus(selectedOrder.getOrderNumber(), OrderStatus.CANCELLED);
                 loadOrders();
@@ -180,10 +180,10 @@ public class OrderController {
         alert.showAndWait();
     }
 
-    private boolean confirmDialog(String title, String content) {
+    private boolean confirmDialog() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setContentText(content);
+        alert.setTitle("Delete Order");
+        alert.setContentText("Are you sure you want to delete this order?");
         return alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }
 }

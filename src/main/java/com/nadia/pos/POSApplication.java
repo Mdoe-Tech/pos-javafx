@@ -47,15 +47,18 @@ public class POSApplication extends Application {
             ProductController productController = new ProductController(productService);
             MainController mainController = new MainController(sceneManager);
 
-            // Initialize order controllers with updated constructors
+            // Initialize order controllers
             OrderController orderController = new OrderController(
                     orderService,
                     employeeService
             );
 
+            // Updated SalesOrderController initialization with EmployeeService
             SalesOrderController salesOrderController = new SalesOrderController(
                     salesOrderService,
-                    customerService
+                    customerService,
+                    employeeService,
+                    productService
             );
 
             // Load scenes

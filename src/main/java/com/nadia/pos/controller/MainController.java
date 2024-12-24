@@ -32,7 +32,6 @@ public class MainController implements Initializable {
 
     private void setupNavigation() {
         dashboardBtn.setOnAction(e -> loadView("dashboard"));
-        ordersBtn.setOnAction(e -> loadView("orders"));
         salesBtn.setOnAction(e -> loadView("sales"));
         customersBtn.setOnAction(e -> loadView("customers"));
         productsBtn.setOnAction(e -> loadView("products"));

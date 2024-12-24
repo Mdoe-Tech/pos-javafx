@@ -4,7 +4,9 @@ import com.nadia.pos.model.*;
 import com.nadia.pos.service.CustomerService;
 import com.nadia.pos.service.ProductService;
 import com.nadia.pos.service.SalesOrderService;
+import com.nadia.pos.service.EmployeeService;
 import com.nadia.pos.enums.SalesType;
+import com.nadia.pos.enums.OrderStatus;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,147 +24,307 @@ import java.util.Optional;
 
 public class SalesOrderController {
     @FXML private TableView<SalesOrder> salesOrderTable;
+    @FXML private TableColumn<SalesOrder, Integer> snCol;
     @FXML private TableColumn<SalesOrder, String> orderNumberCol;
     @FXML private TableColumn<SalesOrder, Customer> customerCol;
     @FXML private TableColumn<SalesOrder, SalesType> typeCol;
+    @FXML private TableColumn<SalesOrder, LocalDateTime> orderDateCol;
     @FXML private TableColumn<SalesOrder, LocalDateTime> deliveryDateCol;
+    @FXML private TableColumn<SalesOrder, OrderStatus> statusCol;
+    @FXML private TableColumn<SalesOrder, BigDecimal> totalAmountCol;
 
     @FXML private TableView<SalesOrderItem> itemsTable;
     @FXML private TableColumn<SalesOrderItem, Product> productCol;
     @FXML private TableColumn<SalesOrderItem, Integer> quantityCol;
-    @FXML private TableColumn<SalesOrderItem, BigDecimal> priceCol;
+    @FXML private TableColumn<SalesOrderItem, BigDecimal> subtotalCol;
 
     @FXML private ComboBox<Customer> customerCombo;
     @FXML private ComboBox<SalesType> typeCombo;
+    @FXML private ComboBox<OrderStatus> statusCombo;
+    @FXML private ComboBox<Employee> employeeCombo;
     @FXML private DatePicker deliveryDatePicker;
     @FXML private TextField addressField;
     @FXML private TextArea notesField;
+    @FXML private TextField taxField;
+    @FXML private TextField discountField;
+    @FXML private Label totalAmountLabel;
+    @FXML private Label finalTotalLabel;
 
     private final SalesOrderService salesOrderService;
     private final CustomerService customerService;
+    private final EmployeeService employeeService;
+    private final ProductService productService;
     private final ObservableList<SalesOrder> salesOrders;
     private final ObservableList<Customer> customerList;
+    private final ObservableList<Employee> employeeList;
+    private final ObservableList<Product> productList;
     private final ObservableList<SalesOrderItem> orderItems = FXCollections.observableArrayList();
+    private SalesOrder currentOrder;
 
-    public SalesOrderController(SalesOrderService salesOrderService, CustomerService customerService) {
+    public SalesOrderController(SalesOrderService salesOrderService,
+                                CustomerService customerService,
+                                EmployeeService employeeService,
+                                ProductService productService
+                                ) {
         this.salesOrderService = salesOrderService;
         this.customerService = customerService;
+        this.employeeService = employeeService;
+        this.productService = productService;
         this.salesOrders = FXCollections.observableArrayList();
         this.customerList = FXCollections.observableArrayList();
+        this.employeeList = FXCollections.observableArrayList();
+        this.productList = FXCollections.observableArrayList();
     }
 
     @FXML
     public void initialize() {
+        System.out.println("Initializing SalesOrderController");
+
+        try {
+            List<Product> products = productService.findAll();
+            productList.setAll(products);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to load products: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+
         setupColumns();
         loadSalesOrders();
-        setupCustomerComboBox();
         setupComboBoxes();
+        setupListeners();
+        handleNewSalesOrder();
     }
 
     private void setupColumns() {
+        // Main table columns
+        snCol.setCellFactory(col -> new TableCell<SalesOrder, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
         orderNumberCol.setCellValueFactory(new PropertyValueFactory<>("orderNumber"));
         customerCol.setCellValueFactory(new PropertyValueFactory<>("customer"));
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+        orderDateCol.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
         deliveryDateCol.setCellValueFactory(new PropertyValueFactory<>("deliveryDate"));
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+        totalAmountCol.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
 
+        // Items table columns
         productCol.setCellValueFactory(new PropertyValueFactory<>("product"));
         quantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        subtotalCol.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+        itemsTable.setItems(orderItems);
     }
 
     private void setupComboBoxes() {
         typeCombo.setItems(FXCollections.observableArrayList(SalesType.values()));
-    }
-
-    private void loadSalesOrders() {
-        salesOrders.clear();
-        salesOrders.addAll(salesOrderService.findAll());
-        salesOrderTable.setItems(salesOrders);
+        statusCombo.setItems(FXCollections.observableArrayList(OrderStatus.values()));
+        setupCustomerComboBox();
+        setupEmployeeComboBox();
     }
 
     private void setupCustomerComboBox() {
         try {
-            // Load customers
             List<Customer> customers = customerService.searchCustomers("");
-            customerList.clear();
-            customerList.addAll(customers);
+            customerList.setAll(customers);
             customerCombo.setItems(customerList);
-
-            // Set up display format for customer names
-            customerCombo.setCellFactory(param -> new ListCell<Customer>() {
-                @Override
-                protected void updateItem(Customer customer, boolean empty) {
-                    super.updateItem(customer, empty);
-                    if (empty || customer == null) {
-                        setText(null);
-                    } else {
-                        setText(String.format("%s (%s)",
-                                customer.getName(),
-                                customer.getCode()));
-                    }
-                }
-            });
-
-            customerCombo.setButtonCell(new ListCell<Customer>() {
-                @Override
-                protected void updateItem(Customer customer, boolean empty) {
-                    super.updateItem(customer, empty);
-                    if (empty || customer == null) {
-                        setText(null);
-                    } else {
-                        setText(String.format("%s (%s)",
-                                customer.getName(),
-                                customer.getCode()));
-                    }
-                }
-            });
-
-            customerCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null) {
-                    addressField.setText(newVal.getAddress());
-                }
-            });
+            setupComboBoxDisplay(customerCombo);
         } catch (Exception e) {
             showAlert("Error", "Failed to load customers", Alert.AlertType.ERROR);
         }
     }
 
+    private void setupEmployeeComboBox() {
+        try {
+            List<Employee> employees = employeeService.findAllEmployees();
+            employeeList.setAll(employees);
+            employeeCombo.setItems(employeeList);
+            setupComboBoxDisplay(employeeCombo);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to load employees", Alert.AlertType.ERROR);
+        }
+    }
+
+    private <T> void setupComboBoxDisplay(ComboBox<T> comboBox) {
+        comboBox.setCellFactory(param -> new ListCell<T>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.toString());
+            }
+        });
+        comboBox.setButtonCell(new ListCell<T>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.toString());
+            }
+        });
+    }
+
+    private void setupListeners() {
+        customerCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                addressField.setText(newVal.getAddress());
+            }
+        });
+
+        taxField.textProperty().addListener((obs, oldVal, newVal) -> refreshTotals());
+        discountField.textProperty().addListener((obs, oldVal, newVal) -> refreshTotals());
+    }
+
+    private void loadSalesOrders() {
+        try {
+            List<SalesOrder> orders = salesOrderService.findAll();
+            salesOrders.setAll(orders);
+            salesOrderTable.setItems(salesOrders);
+
+            salesOrderTable.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        if (newValue != null) {
+                            loadOrderDetails(newValue);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load sales orders: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void loadOrderDetails(SalesOrder order) {
+        currentOrder = order;
+        customerCombo.setValue(order.getCustomer());
+        typeCombo.setValue(order.getType());
+        deliveryDatePicker.setValue(order.getDeliveryDate().toLocalDate());
+        addressField.setText(order.getDeliveryAddress());
+        notesField.setText(order.getNotes());
+        statusCombo.setValue(order.getStatus());
+        employeeCombo.setValue(order.getCreatedBy());
+        taxField.setText(order.getTax().toString());
+        discountField.setText(order.getDiscount().toString());
+
+        List<SalesOrderItem> items = order.getItems().stream()
+                .map(item -> {
+                    SalesOrderItem salesItem = (SalesOrderItem) item;
+                    salesItem.setSalesOrderId(order.getId());
+                    return salesItem;
+                })
+                .collect(java.util.stream.Collectors.toList());
+        orderItems.setAll(items);
+
+        refreshTotals();
+    }
+
     @FXML
     private void handleNewSalesOrder() {
+        currentOrder = new SalesOrder();
+        currentOrder.setOrderDate(LocalDateTime.now());
+        currentOrder.setStatus(OrderStatus.PENDING);
+        currentOrder.setOrderNumber(generateOrderNumber());
         clearFields();
+    }
+
+    private String generateOrderNumber() {
+        return "SO-" + System.currentTimeMillis();
     }
 
     @FXML
     private void handleSave() {
         try {
-            SalesOrder salesOrder = gatherFormData();
-            if (salesOrder.getId() == null) {
-                salesOrderService.createSalesOrder(salesOrder);
-            } else {
-                salesOrderService.updateSalesOrder(salesOrder);
+            if (currentOrder.getOrderNumber() == null) {
+                currentOrder.setOrderNumber(generateOrderNumber());
             }
-            loadSalesOrders();
+
+            updateCurrentOrder();
+            currentOrder.validate();
+
+            if (currentOrder.getId() == null) {
+                salesOrderService.createSalesOrder(currentOrder);
+            } else {
+                salesOrderService.updateSalesOrder(currentOrder);
+            }
             showAlert("Success", "Sales order saved successfully", Alert.AlertType.INFORMATION);
+            handleNewSalesOrder();
         } catch (Exception e) {
             showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    @FXML
-    private void handleDelete() {
-        SalesOrder selectedOrder = salesOrderTable.getSelectionModel().getSelectedItem();
-        if (selectedOrder == null) {
-            return;
+    private void updateCurrentOrder() {
+        String orderNumber = currentOrder.getOrderNumber();
+
+        currentOrder.setCustomer(customerCombo.getValue());
+        currentOrder.setType(typeCombo.getValue());
+        currentOrder.setDeliveryDate(deliveryDatePicker.getValue().atStartOfDay());
+        currentOrder.setDeliveryAddress(addressField.getText());
+        currentOrder.setNotes(notesField.getText());
+        currentOrder.setStatus(statusCombo.getValue());
+        currentOrder.setCreatedBy(employeeCombo.getValue());
+
+        for (OrderItem item : orderItems) {
+            if (currentOrder.getId() != null) {
+                item.setSalesOrderId(currentOrder.getId());
+            }
         }
 
-        if (confirmDialog()) {
-            try {
-                salesOrderService.deleteSalesOrder(selectedOrder.getId());
-                loadSalesOrders();
-                showAlert("Success", "Sales order deleted successfully", Alert.AlertType.INFORMATION);
-            } catch (Exception e) {
-                showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-            }
+        currentOrder.setItems(new ArrayList<>(orderItems));
+
+        // Restore the order number
+        currentOrder.setOrderNumber(orderNumber);
+
+        // Parse and set tax and discount
+        try {
+            currentOrder.setTax(new BigDecimal(taxField.getText()));
+            currentOrder.setDiscount(new BigDecimal(discountField.getText()));
+        } catch (NumberFormatException e) {
+            currentOrder.setTax(BigDecimal.ZERO);
+            currentOrder.setDiscount(BigDecimal.ZERO);
+        }
+
+        currentOrder.calculateTotal();
+    }
+
+    private void clearFields() {
+        customerCombo.setValue(null);
+        typeCombo.setValue(null);
+        deliveryDatePicker.setValue(null);
+        addressField.clear();
+        notesField.clear();
+        orderItems.clear();
+        taxField.setText("0");
+        discountField.setText("0");
+        statusCombo.setValue(OrderStatus.PENDING);
+        employeeCombo.setValue(null);
+        totalAmountLabel.setText("0.00");
+        finalTotalLabel.setText("0.00");
+    }
+
+    private void refreshTotals() {
+        BigDecimal subtotal = orderItems.stream()
+                .map(SalesOrderItem::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal tax = parseBigDecimal(taxField.getText());
+        BigDecimal discount = parseBigDecimal(discountField.getText());
+
+        BigDecimal finalTotal = subtotal.add(tax).subtract(discount);
+
+        totalAmountLabel.setText(subtotal.toString());
+        finalTotalLabel.setText(finalTotal.toString());
+    }
+
+    private BigDecimal parseBigDecimal(String value) {
+        try {
+            return new BigDecimal(value);
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO;
         }
     }
 
@@ -170,21 +332,15 @@ public class SalesOrderController {
     private void handleAddItem() {
         try {
             SalesOrderItem item = new SalesOrderItem();
+            if (currentOrder != null && currentOrder.getId() != null) {
+                item.setSalesOrderId(currentOrder.getId());
+            }
             if (showItemDialog(item)) {
                 orderItems.add(item);
                 refreshTotals();
             }
         } catch (Exception e) {
             showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void handleRemoveItem() {
-        SalesOrderItem selectedItem = itemsTable.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            orderItems.remove(selectedItem);
-            refreshTotals();
         }
     }
 
@@ -197,20 +353,6 @@ public class SalesOrderController {
         order.setNotes(notesField.getText());
         order.setItems(new ArrayList<>(orderItems));
         return order;
-    }
-
-    private void clearFields() {
-        customerCombo.setValue(null);
-        typeCombo.setValue(null);
-        deliveryDatePicker.setValue(null);
-        addressField.clear();
-        notesField.clear();
-        orderItems.clear();
-    }
-
-    private void refreshTotals() {
-        SalesOrder currentOrder = gatherFormData();
-        currentOrder.calculateTotal();
     }
 
     private void showAlert(String title, String content, Alert.AlertType type) {
@@ -228,23 +370,51 @@ public class SalesOrderController {
     }
 
     private boolean showItemDialog(SalesOrderItem item) {
-        // Create dialog
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Add Order Item");
         dialog.setHeaderText("Enter item details");
 
-        // Create dialog content
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.setPadding(new Insets(10));
 
-        ComboBox<Product> productCombo = new ComboBox<>();
+        // Create and populate product ComboBox
+        ComboBox<Product> dialogProductCombo = new ComboBox<>();
+        dialogProductCombo.setItems(FXCollections.observableArrayList(productService.findAll()));
+        dialogProductCombo.setCellFactory(lv -> new ListCell<Product>() {
+            @Override
+            protected void updateItem(Product product, boolean empty) {
+                super.updateItem(product, empty);
+                if (empty || product == null) {
+                    setText(null);
+                } else {
+                    setText(product.getName()); // Assuming Product has getName() method
+                }
+            }
+        });
+        dialogProductCombo.setButtonCell(new ListCell<Product>() {
+            @Override
+            protected void updateItem(Product product, boolean empty) {
+                super.updateItem(product, empty);
+                if (empty || product == null) {
+                    setText(null);
+                } else {
+                    setText(product.getName()); // Assuming Product has getName() method
+                }
+            }
+        });
+
         TextField quantityField = new TextField();
         TextField priceField = new TextField();
 
+        // Configure field sizes
+        dialogProductCombo.setPrefWidth(200);
+        quantityField.setPrefWidth(100);
+        priceField.setPrefWidth(100);
+
         grid.add(new Label("Product:"), 0, 0);
-        grid.add(productCombo, 1, 0);
+        grid.add(dialogProductCombo, 1, 0);
         grid.add(new Label("Quantity:"), 0, 1);
         grid.add(quantityField, 1, 1);
         grid.add(new Label("Price:"), 0, 2);
@@ -253,32 +423,39 @@ public class SalesOrderController {
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Set initial values if editing existing item
+        // Set initial values if editing
         if (item.getProduct() != null) {
-            productCombo.setValue(item.getProduct());
+            dialogProductCombo.setValue(item.getProduct());
             quantityField.setText(String.valueOf(item.getQuantity()));
+            priceField.setText(item.getUnitPrice().toString());
         }
 
         // Add validation
         Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.setDisable(true);
 
-        // Enable OK button only when fields are valid
-        quantityField.textProperty().addListener((observable, oldValue, newValue) -> {
-            validateFields(okButton, productCombo, quantityField, priceField);
-        });
-        priceField.textProperty().addListener((observable, oldValue, newValue) -> {
-            validateFields(okButton, productCombo, quantityField, priceField);
-        });
-        productCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-            validateFields(okButton, productCombo, quantityField, priceField);
+        // Listeners for validation and auto-fill price
+        dialogProductCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                priceField.setText(newVal.getPrice().toString());
+            }
+            validateFields(okButton, dialogProductCombo, quantityField, priceField);
         });
 
-        // Handle result
+        quantityField.textProperty().addListener((obs, oldVal, newVal) -> {
+            validateFields(okButton, dialogProductCombo, quantityField, priceField);
+        });
+
+        priceField.textProperty().addListener((obs, oldVal, newVal) -> {
+            validateFields(okButton, dialogProductCombo, quantityField, priceField);
+        });
+
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            item.setProduct(productCombo.getValue());
+            item.setProduct(dialogProductCombo.getValue());
             item.setQuantity(Integer.parseInt(quantityField.getText()));
+            item.setUnitPrice(new BigDecimal(priceField.getText()));
+            item.getSubtotal();
             return true;
         }
         return false;

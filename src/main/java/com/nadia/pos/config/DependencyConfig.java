@@ -22,16 +22,18 @@ public class DependencyConfig {
         CustomerDAO customerDAO = new CustomerDAOImpl();
         ProductDAO productDAO = new ProductDAOImpl();
         OrderDAO<Order> orderDAO = new OrderDAOImpl<>();
-        SalesOrderDAO salesOrderDAO = new SalesOrderDAOImpl();
-        SalesOrderItemDAO salesOrderItemDAO = new SalesOrderItemDAOImpl();
         OrderItemDAO<OrderItem> orderItemDAO = new OrderItemDAOImpl<>();
         EmployeeDAO employeeDAO = new EmployeeDAOImpl();
 
-        customerService = new CustomerServiceImpl(customerDAO);
-        productService = new ProductServiceImpl(productDAO);
-        employeeService = new EmployeeServiceImpl(employeeDAO);
-        orderService = new AbstractOrderServiceImpl<Order>(orderDAO, orderItemDAO, employeeDAO, productDAO) {};
-        salesOrderService = new SalesOrderServiceImpl(salesOrderDAO, salesOrderItemDAO);
+        this.customerService = new CustomerServiceImpl(customerDAO);
+        this.productService = new ProductServiceImpl(productDAO);
+        this.employeeService = new EmployeeServiceImpl(employeeDAO);
+
+        SalesOrderDAO salesOrderDAO = new SalesOrderDAOImpl(this.customerService, this.employeeService);
+        SalesOrderItemDAO salesOrderItemDAO = new SalesOrderItemDAOImpl(this.productService);
+
+        this.orderService = new AbstractOrderServiceImpl<Order>(orderDAO, orderItemDAO, employeeDAO, productDAO) {};
+        this.salesOrderService = new SalesOrderServiceImpl(salesOrderDAO, salesOrderItemDAO);
     }
 
 

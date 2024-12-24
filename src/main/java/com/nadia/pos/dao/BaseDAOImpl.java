@@ -41,6 +41,8 @@ public abstract class BaseDAOImpl<T extends BaseEntity> implements BaseDAO<T> {
             }
             return entity;
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Error saving entity to " + tableName, e);
         }
     }

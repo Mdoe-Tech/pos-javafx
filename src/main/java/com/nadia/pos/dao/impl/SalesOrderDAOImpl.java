@@ -2,19 +2,28 @@ package com.nadia.pos.dao.impl;
 
 import com.nadia.pos.dao.BaseDAOImpl;
 import com.nadia.pos.dao.SalesOrderDAO;
+import com.nadia.pos.enums.OrderStatus;
 import com.nadia.pos.model.Customer;
+import com.nadia.pos.model.Employee;
 import com.nadia.pos.model.SalesOrder;
 import com.nadia.pos.enums.SalesType;
+import com.nadia.pos.service.CustomerService;
+import com.nadia.pos.service.EmployeeService;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SalesOrderDAOImpl extends BaseDAOImpl<SalesOrder> implements SalesOrderDAO {
+    private final CustomerService customerService;
+    private final EmployeeService employeeService;
 
-    public SalesOrderDAOImpl() throws SQLException {
+    public SalesOrderDAOImpl(CustomerService customerService, EmployeeService employeeService) throws SQLException {
         super("sales_orders");
+        this.customerService = customerService;
+        this.employeeService = employeeService;
     }
 
     @Override
@@ -22,44 +31,85 @@ public class SalesOrderDAOImpl extends BaseDAOImpl<SalesOrder> implements SalesO
         SalesOrder order = new SalesOrder();
         order.setId(rs.getLong("id"));
         order.setCustomer(getCustomer(rs.getLong("customer_id")));
+        order.setOrderNumber(rs.getString("order_number"));
+        order.setOrderDate(rs.getTimestamp("order_date").toLocalDateTime());
         order.setType(SalesType.valueOf(rs.getString("type")));
         order.setDeliveryAddress(rs.getString("delivery_address"));
         order.setDeliveryDate(rs.getTimestamp("delivery_date").toLocalDateTime());
         order.setTotalAmount(rs.getBigDecimal("total_amount"));
         order.setTax(rs.getBigDecimal("tax"));
         order.setDiscount(rs.getBigDecimal("discount"));
+        order.setStatus(OrderStatus.valueOf(rs.getString("status")));
+        order.setNotes(rs.getString("notes"));
         order.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         order.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-        return order;
-    }
+        order.setCreatedBy(getEmployee(rs.getLong("created_by")));
 
-    private Customer getCustomer(Long customerId) {
-        // Implementation to fetch customer details
-        return new Customer();
+        return order;
     }
 
     @Override
     protected void setStatementParameters(PreparedStatement stmt, SalesOrder order) throws SQLException {
-        stmt.setLong(1, order.getCustomer().getId());
-        stmt.setString(2, order.getType().name());
-        stmt.setString(3, order.getDeliveryAddress());
-        stmt.setTimestamp(4, Timestamp.valueOf(order.getDeliveryDate()));
-        stmt.setBigDecimal(5, order.getTotalAmount());
-        stmt.setBigDecimal(6, order.getTax());
-        stmt.setBigDecimal(7, order.getDiscount());
-        stmt.setTimestamp(8, Timestamp.valueOf(order.getUpdatedAt()));
+        int paramIndex = 1;
+        stmt.setLong(paramIndex++, order.getCustomer().getId());
+        stmt.setString(paramIndex++, order.getOrderNumber());
+        stmt.setTimestamp(paramIndex++, Timestamp.valueOf(order.getOrderDate()));
+        stmt.setString(paramIndex++, order.getType().name());
+        stmt.setString(paramIndex++, order.getDeliveryAddress());
+        stmt.setTimestamp(paramIndex++, Timestamp.valueOf(order.getDeliveryDate()));
+        stmt.setBigDecimal(paramIndex++, order.getTotalAmount());
+        stmt.setBigDecimal(paramIndex++, order.getTax());
+        stmt.setBigDecimal(paramIndex++, order.getDiscount());
+        stmt.setString(paramIndex++, order.getStatus().name());
+        stmt.setString(paramIndex++, order.getNotes());
+        stmt.setTimestamp(paramIndex++, Timestamp.valueOf(LocalDateTime.now()));
+        stmt.setLong(paramIndex++, order.getCreatedBy().getId());
+
+        if (order.getId() != null) {
+            stmt.setLong(paramIndex, order.getId());
+        }
     }
 
     @Override
     protected String getInsertQuery() {
-        return "INSERT INTO sales_orders (customer_id, type, delivery_address, delivery_date, " +
-                "total_amount, tax, discount, updated_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        return "INSERT INTO sales_orders (" +
+                "customer_id, order_number, order_date, type, delivery_address, " +
+                "delivery_date, total_amount, tax, discount, status, notes, " +
+                "updated_at, created_by, created_at) VALUES " +
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
     }
 
     @Override
     protected String getUpdateQuery() {
-        return "UPDATE sales_orders SET customer_id=?, type=?, delivery_address=?, delivery_date=?, " +
-                "total_amount=?, tax=?, discount=?, updated_at=? WHERE id=?";
+        return "UPDATE sales_orders SET " +
+                "customer_id=?, order_number=?, order_date=?, type=?, " +
+                "delivery_address=?, delivery_date=?, total_amount=?, tax=?, " +
+                "discount=?, status=?, notes=?, updated_at=?, created_by=? " +
+                "WHERE id=?";
+    }
+
+    private Customer getCustomer(Long customerId) {
+        if (customerId == null) {
+            return null;
+        }
+
+        Optional<Customer> customer = customerService.findCustomerById(customerId);
+        if (customer.isEmpty()) {
+            throw new RuntimeException("Customer not found with ID: " + customerId);
+        }
+        return customer.get();
+    }
+
+    private Employee getEmployee(Long employeeId) {
+        if (employeeId == null) {
+            return null;
+        }
+
+        Optional<Employee> employee = employeeService.findEmployeeById(employeeId);
+        if (employee.isEmpty()) {
+            throw new RuntimeException("Employee not found with ID: " + employeeId);
+        }
+        return employee.get();
     }
 
     @Override
@@ -81,7 +131,7 @@ public class SalesOrderDAOImpl extends BaseDAOImpl<SalesOrder> implements SalesO
     @Override
     public List<SalesOrder> findByType(SalesType type) {
         List<SalesOrder> orders = new ArrayList<>();
-        String query = "SELECT * FROM sales_orders WHERE sales_type = ?";
+        String query = "SELECT * FROM sales_orders WHERE type = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, type.name());
             ResultSet rs = stmt.executeQuery();

@@ -9,61 +9,111 @@
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
 
-    <!-- Sales Order Details -->
-    <GridPane hgap="10" vgap="5">
-        <Label text="Customer:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <ComboBox fx:id="customerCombo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-        <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <ComboBox fx:id="typeCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-        <Label text="Delivery Date:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <DatePicker fx:id="deliveryDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-        <Label text="Delivery Address:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-
-        <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <TextArea fx:id="notesField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-    </GridPane>
-
-    <!-- Sales Orders Table -->
+    <!-- Main Sales Orders Table -->
     <TableView fx:id="salesOrderTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="orderNumberCol" text="Order Number"/>
-            <TableColumn fx:id="customerCol" text="Customer"/>
-            <TableColumn fx:id="typeCol" text="Type"/>
-            <TableColumn fx:id="deliveryDateCol" text="Delivery Date"/>
+            <TableColumn fx:id="snCol" text="SN" prefWidth="50"/>
+            <TableColumn fx:id="orderNumberCol" text="Order Number" prefWidth="100"/>
+            <TableColumn fx:id="customerCol" text="Customer" prefWidth="150"/>
+            <TableColumn fx:id="typeCol" text="Type" prefWidth="100"/>
+            <TableColumn fx:id="orderDateCol" text="Order Date" prefWidth="120"/>
+            <TableColumn fx:id="deliveryDateCol" text="Delivery Date" prefWidth="120"/>
+            <TableColumn fx:id="statusCol" text="Status" prefWidth="100"/>
+            <TableColumn fx:id="totalAmountCol" text="Total Amount" prefWidth="100"/>
         </columns>
     </TableView>
 
-    <!-- Sales Order Items Table -->
-    <TableView fx:id="itemsTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="productCol" text="Product"/>
-            <TableColumn fx:id="quantityCol" text="Quantity"/>
-            <TableColumn fx:id="priceCol" text="Price"/>
-        </columns>
-    </TableView>
+    <!-- Order Details Section -->
+    <TitledPane text="Order Details" expanded="true">
+        <content>
+            <GridPane hgap="10" vgap="5">
+                <padding>
+                    <Insets top="5" right="5" bottom="5" left="5"/>
+                </padding>
+
+                <!-- Left Column -->
+                <Label text="Order Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="orderNumberLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Customer:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <ComboBox fx:id="customerCombo" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <ComboBox fx:id="typeCombo" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <ComboBox fx:id="statusCombo" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="Created By:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <ComboBox fx:id="employeeCombo" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <!-- Right Column -->
+                <Label text="Delivery Date:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <DatePicker fx:id="deliveryDatePicker" prefWidth="200" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                <Label text="Delivery Address:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <TextField fx:id="addressField" prefWidth="200" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+                <Label text="Notes:" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <TextArea fx:id="notesField" prefWidth="200" prefHeight="60"
+                          GridPane.columnIndex="3" GridPane.rowIndex="2" GridPane.rowSpan="3"/>
+
+                <columnConstraints>
+                    <ColumnConstraints minWidth="100"/>
+                    <ColumnConstraints minWidth="200"/>
+                    <ColumnConstraints minWidth="100"/>
+                    <ColumnConstraints minWidth="200"/>
+                </columnConstraints>
+            </GridPane>
+        </content>
+    </TitledPane>
+
+    <!-- Order Items Section -->
+    <TitledPane text="Order Items" expanded="true">
+        <content>
+            <VBox spacing="5">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button text="Add Item" onAction="#handleAddItem"/>
+                </HBox>
+
+                <TableView fx:id="itemsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="productCol" text="Product" prefWidth="200"/>
+                        <TableColumn fx:id="quantityCol" text="Quantity" prefWidth="100"/>
+                        <TableColumn fx:id="priceCol" text="Price" prefWidth="100"/>
+                        <TableColumn fx:id="subtotalCol" text="Subtotal" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </content>
+    </TitledPane>
 
     <!-- Totals Section -->
-    <GridPane hgap="10" vgap="5">
-        <Label text="Subtotal:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="subtotalLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <TitledPane text="Order Totals" expanded="true">
+        <content>
+            <GridPane hgap="10" vgap="5">
+                <padding>
+                    <Insets top="5" right="5" bottom="5" left="5"/>
+                </padding>
 
-        <Label text="Tax:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <Label fx:id="taxLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="Subtotal:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="totalAmountLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="Total:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Label fx:id="totalLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-    </GridPane>
+                <Label text="Tax:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="taxField" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Discount:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="discountField" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="Final Total:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="total-amount"/>
+                <Label fx:id="finalTotalLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="total-amount"/>
+            </GridPane>
+        </content>
+    </TitledPane>
 
     <!-- Action Buttons -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="New" onAction="#handleNewSalesOrder"/>
-        <Button text="Add Item" onAction="#handleAddItem"/>
-        <Button text="Remove Item" onAction="#handleRemoveItem"/>
         <Button text="Save" onAction="#handleSave"/>
-        <Button text="Delete" onAction="#handleDelete"/>
     </HBox>
 </VBox>
