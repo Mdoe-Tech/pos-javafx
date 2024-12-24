@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Sales Order Details -->
+    <GridPane hgap="10" vgap="5">
+        <Label text="Customer:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <ComboBox fx:id="customerCombo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="typeCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Delivery Date:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <DatePicker fx:id="deliveryDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Delivery Address:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextArea fx:id="notesField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    </GridPane>
+
+    <!-- Sales Orders Table -->
+    <TableView fx:id="salesOrderTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="orderNumberCol" text="Order Number"/>
+            <TableColumn fx:id="customerCol" text="Customer"/>
+            <TableColumn fx:id="typeCol" text="Type"/>
+            <TableColumn fx:id="deliveryDateCol" text="Delivery Date"/>
+        </columns>
+    </TableView>
+
+    <!-- Sales Order Items Table -->
+    <TableView fx:id="itemsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="productCol" text="Product"/>
+            <TableColumn fx:id="quantityCol" text="Quantity"/>
+            <TableColumn fx:id="priceCol" text="Price"/>
+        </columns>
+    </TableView>
+
+    <!-- Totals Section -->
+    <GridPane hgap="10" vgap="5">
+        <Label text="Subtotal:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="subtotalLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Tax:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="taxLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Total:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="totalLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="New" onAction="#handleNewSalesOrder"/>
+        <Button text="Add Item" onAction="#handleAddItem"/>
+        <Button text="Remove Item" onAction="#handleRemoveItem"/>
+        <Button text="Save" onAction="#handleSave"/>
+        <Button text="Delete" onAction="#handleDelete"/>
+    </HBox>
+</VBox>

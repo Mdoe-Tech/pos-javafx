@@ -12,7 +12,8 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
     @FXML private StackPane contentArea;
     @FXML private Button dashboardBtn;
-    @FXML private Button posBtn;
+    @FXML private Button ordersBtn;
+    @FXML private Button salesBtn;
     @FXML private Button customersBtn;
     @FXML private Button productsBtn;
     @FXML private Button inventoryBtn;
@@ -31,7 +32,8 @@ public class MainController implements Initializable {
 
     private void setupNavigation() {
         dashboardBtn.setOnAction(e -> loadView("dashboard"));
-        posBtn.setOnAction(e -> loadView("pos"));
+        ordersBtn.setOnAction(e -> loadView("orders"));
+        salesBtn.setOnAction(e -> loadView("sales"));
         customersBtn.setOnAction(e -> loadView("customers"));
         productsBtn.setOnAction(e -> loadView("products"));
         inventoryBtn.setOnAction(e -> loadView("inventory"));

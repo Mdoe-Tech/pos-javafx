@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SalesOrderService {
-    SalesOrder createSalesOrder(SalesOrder order);
-    SalesOrder updateSalesOrder(SalesOrder order);
+    void createSalesOrder(SalesOrder order);
+    void updateSalesOrder(SalesOrder order);
     SalesOrder findById(Long id);
     void deleteSalesOrder(Long id);
 
@@ -17,6 +17,7 @@ public interface SalesOrderService {
     List<SalesOrder> findByType(SalesType type);
     List<SalesOrder> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
     List<SalesOrder> findPendingDeliveries();
+    List<SalesOrder> findAll();
 
     // Order item related operations
     SalesOrderItem addOrderItem(Long orderId, SalesOrderItem item);

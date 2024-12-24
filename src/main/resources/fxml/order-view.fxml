@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Order Details -->
+    <GridPane hgap="10" vgap="5">
+        <Label text="Order Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="orderNumberField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Employee:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="employeeCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <ComboBox fx:id="statusCombo" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Discount:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="discountField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextArea fx:id="notesField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    </GridPane>
+
+    <!-- Orders Table -->
+    <TableView fx:id="orderTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="orderNumberCol" text="Order Number"/>
+            <TableColumn fx:id="orderDateCol" text="Order Date"/>
+            <TableColumn fx:id="totalAmountCol" text="Total Amount"/>
+            <TableColumn fx:id="statusCol" text="Status"/>
+        </columns>
+    </TableView>
+
+    <!-- Order Items Table -->
+    <TableView fx:id="itemsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="productCol" text="Product"/>
+            <TableColumn fx:id="quantityCol" text="Quantity"/>
+            <TableColumn fx:id="priceCol" text="Price"/>
+        </columns>
+    </TableView>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Save" onAction="#handleSave"/>
+        <Button text="Delete" onAction="#handleDelete"/>
+    </HBox>
+</VBox>

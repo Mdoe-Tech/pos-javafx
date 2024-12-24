@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public interface OrderService<T extends Order> {
     T createOrder(T order) throws ValidationException;
-    T updateOrder(T order) throws ValidationException;
+    void updateOrder(T order) throws ValidationException;
     T addOrderItem(String orderNumber, OrderItem item) throws ValidationException;
     T removeOrderItem(String orderNumber, Long itemId) throws ValidationException;
-    T updateOrderStatus(String orderNumber, OrderStatus status) throws ValidationException;
+    void updateOrderStatus(String orderNumber, OrderStatus status) throws ValidationException;
     T processPayment(String orderNumber, Payment payment) throws ValidationException;
     Optional<T> getOrder(Long id);
     Optional<T> getOrderByNumber(String orderNumber);
@@ -25,4 +25,5 @@ public interface OrderService<T extends Order> {
     List<T> getOrdersByEmployee(Long employeeId);
     BigDecimal calculateOrderTotal(String orderNumber);
     BigDecimal getDailySales(LocalDateTime date);
+    List<T> findAll();
 }

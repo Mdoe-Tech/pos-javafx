@@ -11,7 +11,6 @@ import com.nadia.pos.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +71,7 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
     }
 
     @Override
-    public T updateOrder(T order) throws ValidationException {
+    public void updateOrder(T order) throws ValidationException {
         T existingOrder = orderDAO.findByOrderNumber(order.getOrderNumber())
                 .orElseThrow(() -> new ValidationException("Order not found"));
 
@@ -86,7 +85,7 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
 
         order.setUpdatedAt(LocalDateTime.now());
 
-        return orderDAO.update(order);
+        orderDAO.update(order);
     }
 
     @Override
@@ -121,7 +120,7 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
     }
 
     @Override
-    public T updateOrderStatus(String orderNumber, OrderStatus status) throws ValidationException {
+    public void updateOrderStatus(String orderNumber, OrderStatus status) throws ValidationException {
         T order = orderDAO.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new ValidationException("Order not found"));
 
@@ -129,7 +128,7 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
         order.setStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
 
-        return orderDAO.update(order);
+        orderDAO.update(order);
     }
 
     @Override
@@ -193,6 +192,10 @@ public abstract class AbstractOrderServiceImpl<T extends Order> implements Order
                 .filter(order -> order.getStatus() == OrderStatus.COMPLETED)
                 .map(Order::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public List<T> findAll(){
+        return orderDAO.findAll();
     }
 
     protected BigDecimal calculateOrderTotals(T order) {

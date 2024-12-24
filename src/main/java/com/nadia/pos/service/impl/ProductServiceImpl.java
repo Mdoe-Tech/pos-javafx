@@ -20,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product createProduct(Product product) throws ValidationException {
+    public void createProduct(Product product) throws ValidationException {
         // Validate product data
         product.validate();
 
@@ -40,11 +40,11 @@ public class ProductServiceImpl implements ProductService {
         product.setCreatedAt(now);
         product.setUpdatedAt(now);
 
-        return productDAO.save(product);
+        productDAO.save(product);
     }
 
     @Override
-    public Product updateProduct(Product product) throws ValidationException {
+    public void updateProduct(Product product) throws ValidationException {
         // Validate product exists
         productDAO.findById(product.getId());
         // Validate product data
@@ -59,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
         // Update timestamp
         product.setUpdatedAt(LocalDateTime.now());
 
-        return productDAO.update(product);
+        productDAO.update(product);
     }
 
     @Override
@@ -124,6 +124,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findLowStockProducts() {
         return productDAO.findLowStock();
+    }
+
+    @Override
+    public List<Product> findAllProducts() {
+        return productDAO.findAll();
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productDAO.findAll();
     }
 
     private void validateUniqueness(Product product) throws ValidationException {

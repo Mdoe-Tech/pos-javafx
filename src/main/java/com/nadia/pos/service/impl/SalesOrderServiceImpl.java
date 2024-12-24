@@ -22,7 +22,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public SalesOrder createSalesOrder(SalesOrder order) {
+    public void createSalesOrder(SalesOrder order) {
         validateSalesOrder(order);
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
@@ -40,11 +40,10 @@ public class SalesOrderServiceImpl implements SalesOrderService {
             }
         }
 
-        return savedOrder;
     }
 
     @Override
-    public SalesOrder updateSalesOrder(SalesOrder order) {
+    public void updateSalesOrder(SalesOrder order) {
         validateSalesOrder(order);
         SalesOrder existingOrder = findById(order.getId());
 
@@ -58,7 +57,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 
         order.setUpdatedAt(LocalDateTime.now());
         order.calculateTotal();
-        return salesOrderDAO.update(order);
+        salesOrderDAO.update(order);
     }
 
     @Override
@@ -107,6 +106,11 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     @Override
     public List<SalesOrder> findPendingDeliveries() {
         return salesOrderDAO.findPendingDeliveries();
+    }
+
+    @Override
+    public List<SalesOrder> findAll() {
+        return salesOrderDAO.findAll();
     }
 
     @Override

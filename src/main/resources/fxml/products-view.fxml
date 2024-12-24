@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets topRightBottomLeft="20"/>
+    </padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="Search products..." HBox.hgrow="ALWAYS"/>
+        <Button fx:id="addButton" text="Add Product"/>
+    </HBox>
+
+    <TableView fx:id="productTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="codeColumn" text="Code" prefWidth="100"/>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
+            <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="200"/>
+            <TableColumn fx:id="categoryColumn" text="Category" prefWidth="120"/>
+            <TableColumn fx:id="priceColumn" text="Price" prefWidth="100"/>
+            <TableColumn fx:id="costPriceColumn" text="Cost Price" prefWidth="100"/>
+            <TableColumn fx:id="stockColumn" text="Stock"/>
+            <TableColumn fx:id="unitColumn" text="Unit"/>
+            <TableColumn fx:id="minimumStockColumn" text="Min Stock" prefWidth="100"/>
+            <TableColumn fx:id="barcodeColumn" text="Barcode" prefWidth="120"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="120"/>
+        </columns>
+    </TableView>
+</VBox>

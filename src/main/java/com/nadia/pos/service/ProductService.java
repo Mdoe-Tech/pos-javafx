@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    Product createProduct(Product product) throws ValidationException;
+    void createProduct(Product product) throws ValidationException;
 
-    Product updateProduct(Product product) throws ValidationException;
+    void updateProduct(Product product) throws ValidationException;
 
     void updateStock(Long productId, Integer quantity) throws BusinessException, ValidationException;
 
@@ -28,4 +28,10 @@ public interface ProductService {
     List<Product> searchProducts(String namePattern);
 
     List<Product> findLowStockProducts();
+
+    List<Product> findAllProducts();
+
+    void deleteProduct(Long id);
+
+    List<Product> findAll();
 }
