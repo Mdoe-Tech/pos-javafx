@@ -3,8 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import java.net.URL?>
+
 <VBox spacing="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
         <Insets bottom="20" left="20" right="20" top="20"/>
@@ -36,70 +36,15 @@
     <!-- Main Table -->
     <TableView fx:id="movementTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="dateColumn" text="Date" prefWidth="150">
-                <graphic>
-                    <Label text="Date">
-                        <tooltip>
-                            <Tooltip text="Movement date and time"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
-            <TableColumn fx:id="typeColumn" text="Type" prefWidth="100">
-                <graphic>
-                    <Label text="Type">
-                        <tooltip>
-                            <Tooltip text="Movement type"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
-            <TableColumn fx:id="productColumn" text="Product" prefWidth="200">
-                <graphic>
-                    <Label text="Product">
-                        <tooltip>
-                            <Tooltip text="Product name"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
-            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100">
-                <graphic>
-                    <Label text="Quantity">
-                        <tooltip>
-                            <Tooltip text="Movement quantity"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
-            <TableColumn fx:id="referenceColumn" text="Reference" prefWidth="120">
-                <graphic>
-                    <Label text="Reference">
-                        <tooltip>
-                            <Tooltip text="Reference number"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
-            <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="200">
-                <graphic>
-                    <Label text="Reason">
-                        <tooltip>
-                            <Tooltip text="Movement reason"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
-            <TableColumn fx:id="processedByColumn" text="Processed By" prefWidth="150">
-                <graphic>
-                    <Label text="Processed By">
-                        <tooltip>
-                            <Tooltip text="Employee who processed the movement"/>
-                        </tooltip>
-                    </Label>
-                </graphic>
-            </TableColumn>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
+            <TableColumn fx:id="typeColumn" text="Type" prefWidth="100"/>
+            <TableColumn fx:id="productColumn" text="Product" prefWidth="200"/>
+            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100"/>
+            <TableColumn fx:id="referenceColumn" text="Reference" prefWidth="120"/>
+            <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="200"/>
+            <TableColumn fx:id="processedByColumn" text="Processed By" prefWidth="150"/>
         </columns>
+
         <placeholder>
             <Label text="No stock movements found"/>
         </placeholder>
@@ -107,14 +52,10 @@
 
     <!-- Bottom Controls -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button">
-            <tooltip>
-                <Tooltip text="View selected movement details"/>
-            </tooltip>
-        </Button>
+        <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button"/>
     </HBox>
 
     <stylesheets>
-        <URL value="@../styles/stock-movement.css" />
+        <URL value="@../styles/stock-movement.css"/>
     </stylesheets>
 </VBox>

@@ -4,7 +4,6 @@ import com.nadia.pos.enums.StockMovementType;
 import com.nadia.pos.model.Employee;
 import com.nadia.pos.model.Product;
 import com.nadia.pos.model.StockMovement;
-import com.nadia.pos.service.InventoryService;
 import com.nadia.pos.service.StockMovementService;
 import com.nadia.pos.service.ProductService;
 import com.nadia.pos.service.EmployeeService;
@@ -21,7 +20,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -70,20 +68,37 @@ public class StockMovementController implements Initializable {
     }
 
     private void setupTableColumns() {
+        TableColumn<StockMovement, Integer> snCol = new TableColumn<>("SN");
+        snCol.setCellFactory(col -> new TableCell<StockMovement, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1));
+                }
+            }
+        });
+
         dateColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getCreatedAt().toString()));
         typeColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getType().toString()));
-        productColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getProduct().getName()));
+        productColumn.setCellValueFactory(data -> {
+            Product product = data.getValue().getProduct();
+            return new SimpleStringProperty(product != null ? product.getName() : "");
+        });
         quantityColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(String.valueOf(data.getValue().getQuantity())));
         referenceColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getReferenceNumber()));
         reasonColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getReason()));
-        processedByColumn.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getProcessedBy().getFullName()));
+        processedByColumn.setCellValueFactory(data -> {
+            Employee employee = data.getValue().getProcessedBy();
+            return new SimpleStringProperty(employee != null ? employee.getFullName() : "");
+        });
     }
 
     private void setupMovementTypeCombo() {
