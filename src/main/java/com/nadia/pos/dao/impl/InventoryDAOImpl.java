@@ -4,7 +4,6 @@ import com.nadia.pos.dao.BaseDAOImpl;
 import com.nadia.pos.dao.InventoryDAO;
 import com.nadia.pos.model.Inventory;
 import com.nadia.pos.model.Product;
-import com.nadia.pos.utils.DatabaseUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,52 +11,8 @@ import java.util.List;
 
 public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements InventoryDAO {
 
-    private final Connection connection;
-
     public InventoryDAOImpl() throws SQLException {
         super("inventory");
-        this.connection = DatabaseUtil.getConnection();
-    }
-
-    @Override
-    public Inventory findByProduct(Long productId) throws SQLException {
-        String query = """
-            SELECT i.*, p.name as product_name 
-            FROM inventory i 
-            JOIN products p ON i.product_id = p.id 
-            WHERE i.product_id = ?
-        """;
-
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setLong(1, productId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return mapResultSetToEntity(rs);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public List<Inventory> findLowStock() throws SQLException {
-        String query = """
-            SELECT i.*, p.name as product_name 
-            FROM inventory i 
-            JOIN products p ON i.product_id = p.id 
-            WHERE i.quantity <= i.minimum_stock AND i.is_active = true
-        """;
-
-        List<Inventory> lowStockItems = new ArrayList<>();
-
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                lowStockItems.add(mapResultSetToEntity(rs));
-            }
-        }
-        return lowStockItems;
     }
 
     @Override
@@ -67,9 +22,7 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
 
         Product product = new Product();
         product.setId(rs.getLong("product_id"));
-        product.setName(rs.getString("product_name"));
         inventory.setProduct(product);
-
         inventory.setQuantity(rs.getInt("quantity"));
         inventory.setMinimumStock(rs.getInt("minimum_stock"));
         inventory.setMaximumStock(rs.getInt("maximum_stock"));
@@ -94,36 +47,6 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
     }
 
     @Override
-    public Inventory save(Inventory inventory) {
-        String query = getInsertQuery();
-        try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            setStatementParameters(stmt, inventory);
-            stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                inventory.setId(rs.getLong(1));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return inventory;
-    }
-
-    @Override
-    public Inventory update(Inventory inventory) {
-        String query = getUpdateQuery();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            setStatementParameters(stmt, inventory);
-            stmt.setLong(12, inventory.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
-    @Override
     protected void setStatementParameters(PreparedStatement stmt, Inventory inventory) throws SQLException {
         stmt.setLong(1, inventory.getProduct().getId());
         stmt.setInt(2, inventory.getQuantity());
@@ -135,37 +58,66 @@ public class InventoryDAOImpl extends BaseDAOImpl<Inventory> implements Inventor
                 Timestamp.valueOf(inventory.getLastRestockDate()) : null);
         stmt.setTimestamp(8, inventory.getLastStockCheckDate() != null ?
                 Timestamp.valueOf(inventory.getLastStockCheckDate()) : null);
+        stmt.setTimestamp(9, Timestamp.valueOf(inventory.getUpdatedAt()));
     }
 
     @Override
     protected String getInsertQuery() {
-        return """
-            INSERT INTO inventory (
-                product_id, quantity, minimum_stock, maximum_stock, 
-                location, bin_number, last_restock_date, last_stock_check_date,
-                created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-        """;
+        return "INSERT INTO inventory (product_id, quantity, minimum_stock, maximum_stock, " +
+                "location, bin_number, last_restock_date, last_stock_check_date, updated_at, created_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
     }
 
     @Override
     protected String getUpdateQuery() {
-        return """
-            UPDATE inventory SET 
-                product_id = ?, 
-                quantity = ?, 
-                minimum_stock = ?, 
-                maximum_stock = ?, 
-                location = ?, 
-                bin_number = ?, 
-                last_restock_date = ?, 
-                last_stock_check_date = ?,
-                updated_at = NOW()
-            WHERE id = ?
-        """;
+        return "UPDATE inventory SET product_id=?, quantity=?, minimum_stock=?, maximum_stock=?, " +
+                "location=?, bin_number=?, last_restock_date=?, last_stock_check_date=?, " +
+                "updated_at=? WHERE id=?";
     }
 
-    public void close() {
-        DatabaseUtil.closeConnection(connection);
+    @Override
+    public Inventory findByProduct(Long productId) {
+        String query = "SELECT i.*, p.name as product_name " +
+                "FROM inventory i " +
+                "JOIN products p ON i.product_id = p.id " +
+                "WHERE i.product_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setLong(1, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToEntity(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding inventory by product", e);
+        }
+    }
+
+    @Override
+    public String getFindAllQuery() {
+        return "SELECT i.*, p.name as product_name " +
+                "FROM inventory i " +
+                "JOIN products p ON i.product_id = p.id " +
+                "WHERE i.is_active = true";
+    }
+
+    @Override
+    public List<Inventory> findLowStock() {
+        String query = "SELECT i.*, p.name as product_name " +
+                "FROM inventory i " +
+                "JOIN products p ON i.product_id = p.id " +
+                "WHERE i.quantity <= i.minimum_stock AND i.is_active = true";
+
+        List<Inventory> lowStockItems = new ArrayList<>();
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                lowStockItems.add(mapResultSetToEntity(rs));
+            }
+            return lowStockItems;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding low stock inventory items", e);
+        }
     }
 }

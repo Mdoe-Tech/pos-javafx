@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<VBox spacing="10" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20"/>
+    </padding>
+
+    <!-- Search Controls -->
+    <GridPane hgap="10" vgap="10">
+        <Label text="Start Date:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="End Date:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <DatePicker fx:id="endDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+        <Label text="Movement Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="movementTypeCombo" promptText="Select type"
+                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Reference:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+        <TextField fx:id="referenceSearchField" promptText="Enter reference number"
+                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+        <HBox spacing="10" alignment="CENTER_RIGHT"
+              GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="2">
+            <Button fx:id="searchButton" text="Search" styleClass="action-button"/>
+            <Button fx:id="newMovementButton" text="New Movement" styleClass="action-button"/>
+        </HBox>
+    </GridPane>
+
+    <!-- Main Table -->
+    <TableView fx:id="movementTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="150">
+                <graphic>
+                    <Label text="Date">
+                        <tooltip>
+                            <Tooltip text="Movement date and time"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+            <TableColumn fx:id="typeColumn" text="Type" prefWidth="100">
+                <graphic>
+                    <Label text="Type">
+                        <tooltip>
+                            <Tooltip text="Movement type"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+            <TableColumn fx:id="productColumn" text="Product" prefWidth="200">
+                <graphic>
+                    <Label text="Product">
+                        <tooltip>
+                            <Tooltip text="Product name"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100">
+                <graphic>
+                    <Label text="Quantity">
+                        <tooltip>
+                            <Tooltip text="Movement quantity"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+            <TableColumn fx:id="referenceColumn" text="Reference" prefWidth="120">
+                <graphic>
+                    <Label text="Reference">
+                        <tooltip>
+                            <Tooltip text="Reference number"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+            <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="200">
+                <graphic>
+                    <Label text="Reason">
+                        <tooltip>
+                            <Tooltip text="Movement reason"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+            <TableColumn fx:id="processedByColumn" text="Processed By" prefWidth="150">
+                <graphic>
+                    <Label text="Processed By">
+                        <tooltip>
+                            <Tooltip text="Employee who processed the movement"/>
+                        </tooltip>
+                    </Label>
+                </graphic>
+            </TableColumn>
+        </columns>
+        <placeholder>
+            <Label text="No stock movements found"/>
+        </placeholder>
+    </TableView>
+
+    <!-- Bottom Controls -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button">
+            <tooltip>
+                <Tooltip text="View selected movement details"/>
+            </tooltip>
+        </Button>
+    </HBox>
+
+    <stylesheets>
+        <URL value="@../styles/stock-movement.css" />
+    </stylesheets>
+</VBox>

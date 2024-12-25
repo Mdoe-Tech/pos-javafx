@@ -12,6 +12,7 @@ module com.nadia.pos {
     requires java.sql;
     requires com.zaxxer.hikari;
     requires org.postgresql.jdbc;
+    requires org.apache.pdfbox;
 
     opens com.nadia.pos to javafx.fxml;
     exports com.nadia.pos;

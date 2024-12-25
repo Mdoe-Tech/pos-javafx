@@ -85,6 +85,7 @@ public abstract class BaseDAOImpl<T extends BaseEntity> implements BaseDAO<T> {
             }
             return entities;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException("Error finding all entities from " + tableName, e);
         }
     }

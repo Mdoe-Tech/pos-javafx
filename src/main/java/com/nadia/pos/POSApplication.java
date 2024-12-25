@@ -41,6 +41,8 @@ public class POSApplication extends Application {
             EmployeeService employeeService = dependencies.getEmployeeService();
             OrderService<Order> orderService = dependencies.getOrderService();
             SalesOrderService salesOrderService = dependencies.getSalesOrderService();
+            InventoryService inventoryService = dependencies.getInventoryService();
+            StockMovementService stockMovementService = dependencies.getStockMovementService();
 
             // Initialize controllers with required services
             CustomerController customerController = new CustomerController(customerService);
@@ -48,13 +50,20 @@ public class POSApplication extends Application {
             ProductController productController = new ProductController(productService);
             MainController mainController = new MainController(sceneManager);
 
+            // Initialize inventory-related controllers
+            InventoryController inventoryController = new InventoryController(inventoryService,productService,employeeService);
+            StockMovementController stockMovementController = new StockMovementController(
+                    stockMovementService,
+                    productService,
+                    employeeService
+            );
+
             // Initialize order controllers
             OrderController orderController = new OrderController(
                     orderService,
                     employeeService
             );
 
-            // Updated SalesOrderController initialization with EmployeeService
             SalesOrderController salesOrderController = new SalesOrderController(
                     salesOrderService,
                     customerService,
@@ -69,6 +78,8 @@ public class POSApplication extends Application {
             sceneManager.loadView("products", "/fxml/products-view.fxml", productController);
             sceneManager.loadView("orders", "/fxml/order-view.fxml", orderController);
             sceneManager.loadView("sales", "/fxml/sales-order-view.fxml", salesOrderController);
+            sceneManager.loadView("inventories", "/fxml/inventory-view.fxml", inventoryController);
+            sceneManager.loadView("stockMovements", "/fxml/stock-movement-view.fxml", stockMovementController);
 
             // Switch to main scene and load views
             sceneManager.switchScene("main");
@@ -77,8 +88,11 @@ public class POSApplication extends Application {
             mainController.loadView("orders");
             mainController.loadView("sales");
             mainController.loadView("employees");
+            mainController.loadView("inventories");
+            mainController.loadView("stockMovements");
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Failed to initialize scenes: " + e.getMessage(), e);
         }
     }

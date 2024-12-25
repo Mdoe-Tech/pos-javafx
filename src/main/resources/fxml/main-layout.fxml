@@ -56,6 +56,13 @@
             <text>Inventory</text>
         </Button>
 
+        <Button fx:id="stockMovementBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-warehouse" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Stock Movement</text>
+        </Button>
+
         <Region VBox.vgrow="ALWAYS"/>
 
         <Button fx:id="settingsBtn" styleClass="nav-button">

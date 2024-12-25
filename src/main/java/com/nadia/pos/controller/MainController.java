@@ -12,11 +12,11 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
     @FXML private StackPane contentArea;
     @FXML private Button dashboardBtn;
-    @FXML private Button ordersBtn;
     @FXML private Button salesBtn;
     @FXML private Button customersBtn;
     @FXML private Button productsBtn;
     @FXML private Button inventoryBtn;
+    @FXML private Button stockMovementBtn;
     @FXML private Button settingsBtn;
     @FXML private Button employeesBtn;
 
@@ -37,8 +37,9 @@ public class MainController implements Initializable {
         customersBtn.setOnAction(e -> loadView("customers"));
         employeesBtn.setOnAction(e -> loadView("employees"));
         productsBtn.setOnAction(e -> loadView("products"));
-        inventoryBtn.setOnAction(e -> loadView("inventory"));
+        inventoryBtn.setOnAction(e -> loadView("inventories"));
         settingsBtn.setOnAction(e -> loadView("settings"));
+        stockMovementBtn.setOnAction(e -> loadView("stockMovements"));
     }
 
     public void loadView(String viewName) {

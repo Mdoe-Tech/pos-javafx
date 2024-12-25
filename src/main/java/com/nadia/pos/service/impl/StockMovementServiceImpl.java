@@ -153,10 +153,15 @@ public class StockMovementServiceImpl implements StockMovementService {
         return stockMovementDAO.findByReferenceNumber(referenceNumber);
     }
 
+    @Override
+    public List<StockMovement> getAllMovements() throws SQLException {
+        return stockMovementDAO.findAll();
+    }
+
     private int calculateNewStock(int currentStock, int quantity, StockMovementType type) {
         return switch (type) {
             case RECEIPT -> currentStock + quantity;
-            case TRANSFER, ADJUSTMENT -> currentStock + quantity; // quantity can be negative
+            case TRANSFER, ADJUSTMENT -> currentStock + quantity;
             default -> throw new IllegalArgumentException("Unsupported movement type: " + type);
         };
     }
