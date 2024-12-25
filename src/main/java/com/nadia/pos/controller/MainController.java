@@ -18,6 +18,7 @@ public class MainController implements Initializable {
     @FXML private Button productsBtn;
     @FXML private Button inventoryBtn;
     @FXML private Button settingsBtn;
+    @FXML private Button employeesBtn;
 
     private final SceneManager sceneManager;
 
@@ -34,6 +35,7 @@ public class MainController implements Initializable {
         dashboardBtn.setOnAction(e -> loadView("dashboard"));
         salesBtn.setOnAction(e -> loadView("sales"));
         customersBtn.setOnAction(e -> loadView("customers"));
+        employeesBtn.setOnAction(e -> loadView("employees"));
         productsBtn.setOnAction(e -> loadView("products"));
         inventoryBtn.setOnAction(e -> loadView("inventory"));
         settingsBtn.setOnAction(e -> loadView("settings"));

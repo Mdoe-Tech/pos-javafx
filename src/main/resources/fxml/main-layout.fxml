@@ -21,11 +21,11 @@
             <text>Dashboard</text>
         </Button>
 
-        <Button fx:id="salesBtn" styleClass="nav-button">
+        <Button fx:id="employeesBtn" styleClass="nav-button">
             <graphic>
-                <FontIcon iconLiteral="fas-cash-register" iconSize="18" iconColor="#ff9f43"/>
+                <FontIcon iconLiteral="fas-users" iconSize="18" iconColor="#ff9f43"/>
             </graphic>
-            <text>Point of Sale</text>
+            <text>Employees</text>
         </Button>
 
         <Button fx:id="customersBtn" styleClass="nav-button">
@@ -40,6 +40,13 @@
                 <FontIcon iconLiteral="fas-boxes" iconSize="18" iconColor="#ff9f43"/>
             </graphic>
             <text>Products</text>
+        </Button>
+
+        <Button fx:id="salesBtn" styleClass="nav-button">
+            <graphic>
+                <FontIcon iconLiteral="fas-cash-register" iconSize="18" iconColor="#ff9f43"/>
+            </graphic>
+            <text>Point of Sale</text>
         </Button>
 
         <Button fx:id="inventoryBtn" styleClass="nav-button">

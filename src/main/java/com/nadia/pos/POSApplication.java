@@ -44,6 +44,7 @@ public class POSApplication extends Application {
 
             // Initialize controllers with required services
             CustomerController customerController = new CustomerController(customerService);
+            EmployeeController employeeController = new EmployeeController(employeeService);
             ProductController productController = new ProductController(productService);
             MainController mainController = new MainController(sceneManager);
 
@@ -63,6 +64,7 @@ public class POSApplication extends Application {
 
             // Load scenes
             sceneManager.loadScene("main", "/fxml/main-layout.fxml", mainController);
+            sceneManager.loadView("employees", "/fxml/employee-view.fxml", employeeController);
             sceneManager.loadView("customers", "/fxml/customer-view.fxml", customerController);
             sceneManager.loadView("products", "/fxml/products-view.fxml", productController);
             sceneManager.loadView("orders", "/fxml/order-view.fxml", orderController);
@@ -74,6 +76,7 @@ public class POSApplication extends Application {
             mainController.loadView("products");
             mainController.loadView("orders");
             mainController.loadView("sales");
+            mainController.loadView("employees");
 
         } catch (Exception e) {
             throw new Exception("Failed to initialize scenes: " + e.getMessage(), e);

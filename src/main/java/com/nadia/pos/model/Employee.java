@@ -52,9 +52,6 @@ public class Employee extends BaseEntity {
         if (password == null || password.length() < 6) {
             throw new ValidationException("Password must be at least 6 characters long");
         }
-        if (roles == null || roles.isEmpty()) {
-            throw new ValidationException("Employee must have at least one role");
-        }
     }
 
     public String getFullName() {
