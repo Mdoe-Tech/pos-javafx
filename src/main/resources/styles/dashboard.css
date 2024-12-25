@@ -1,0 +1,70 @@
+.metric-box {
+    -fx-padding: 15;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-background-radius: 5;
+    -fx-min-width: 200;
+    -fx-alignment: center;
+    -fx-content-display: center;
+    -fx-text-alignment: center;
+}
+
+.metric-title {
+    -fx-font-size: 14;
+    -fx-text-fill: #666666;
+    -fx-padding: 0 0 5 0;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.metric-value {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e67e22;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.chart {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+    -fx-alignment: center;
+}
+
+.chart-title {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d35400;
+    -fx-alignment: center;
+}
+
+.axis-label {
+    -fx-font-size: 12;
+    -fx-text-fill: #e67e22;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+}
+
+.default-color0.chart-bar { -fx-bar-fill: #f39c12; }
+.default-color0.chart-series-line { -fx-stroke: #e67e22; }
+
+.chart-plot-background {
+    -fx-background-color: #fff5e6;
+}
+
+.root {
+    -fx-alignment: center;
+}
+
+GridPane {
+    -fx-alignment: center;
+}
+
+HBox, VBox {
+    -fx-alignment: center;
+}

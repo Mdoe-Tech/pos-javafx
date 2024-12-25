@@ -155,7 +155,14 @@ public class StockMovementServiceImpl implements StockMovementService {
 
     @Override
     public List<StockMovement> getAllMovements() throws SQLException {
-        return stockMovementDAO.findAll();
+        List<StockMovement> movements = stockMovementDAO.findAll();
+                System.out.println("Found " + movements.size() + " movements");
+        for (StockMovement movement : movements) {
+            System.out.println("Movement ID: " + movement.getId());
+            System.out.println("Product: " + movement.getProduct());
+            System.out.println("Employee: " + movement.getProcessedBy());
+        }
+        return movements;
     }
 
     private int calculateNewStock(int currentStock, int quantity, StockMovementType type) {

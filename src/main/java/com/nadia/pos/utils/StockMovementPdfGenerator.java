@@ -85,14 +85,13 @@ public class StockMovementPdfGenerator {
         }
     }
 
-    private void addLabelValuePair(PDPageContentStream contentStream, String label, String value,
-                                   float y) throws Exception {
-        addText(contentStream, label, StockMovementPdfGenerator.MARGIN, y, boldFont, 12);
-        addText(contentStream, value, StockMovementPdfGenerator.MARGIN + 150, y, regularFont, 12);
+    private void addLabelValuePair(PDPageContentStream contentStream, String label, String value, float y) throws Exception {
+        addText(contentStream, label, MARGIN, y, boldFont, 12);
+        addText(contentStream, value != null ? value : "N/A", MARGIN + 150, y, regularFont, 12);
     }
 
-    private void addText(PDPageContentStream contentStream, String text, float x, float y,
-                         PDType0Font font, float fontSize) throws Exception {
+    private void addText(PDPageContentStream contentStream, String text, float x, float y, PDType0Font font, float fontSize) throws Exception {
+        if (text == null) text = "N/A";
         contentStream.beginText();
         contentStream.setFont(font, fontSize);
         contentStream.newLineAtOffset(x, y);

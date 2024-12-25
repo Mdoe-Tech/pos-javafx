@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.Insets?>
+
+<?import java.net.URL?>
+<VBox spacing="20" xmlns:fx="http://javafx.com/fxml" alignment="CENTER">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Key Metrics -->
+    <GridPane hgap="20" vgap="10" alignment="CENTER">
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" />
+            <ColumnConstraints halignment="CENTER" />
+            <ColumnConstraints halignment="CENTER" />
+            <ColumnConstraints halignment="CENTER" />
+        </columnConstraints>
+
+        <VBox styleClass="metric-box" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label text="Total Customers" styleClass="metric-title"/>
+            <Label fx:id="totalCustomersLabel" styleClass="metric-value"/>
+        </VBox>
+
+        <VBox styleClass="metric-box" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label text="Total Employees" styleClass="metric-title"/>
+            <Label fx:id="totalEmployeesLabel" styleClass="metric-value"/>
+        </VBox>
+
+        <VBox styleClass="metric-box" GridPane.columnIndex="2" GridPane.rowIndex="0">
+            <Label text="Total Sales" styleClass="metric-title"/>
+            <Label fx:id="totalSalesLabel" styleClass="metric-value"/>
+        </VBox>
+
+        <VBox styleClass="metric-box" GridPane.columnIndex="3" GridPane.rowIndex="0">
+            <Label text="Average Order Value" styleClass="metric-title"/>
+            <Label fx:id="averageOrderValueLabel" styleClass="metric-value"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Charts -->
+    <HBox spacing="20" alignment="CENTER">
+        <BarChart fx:id="salesChart" title="Monthly Sales" prefHeight="300">
+            <xAxis>
+                <CategoryAxis label="Month" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Amount" side="LEFT"/>
+            </yAxis>
+        </BarChart>
+
+        <LineChart fx:id="orderTrendsChart" title="Order Trends" prefHeight="300">
+            <xAxis>
+                <CategoryAxis label="Month" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Orders" side="LEFT"/>
+            </yAxis>
+        </LineChart>
+    </HBox>
+    <stylesheets>
+        <URL value="@../styles/dashboard.css"/>
+    </stylesheets>
+</VBox>

@@ -29,7 +29,6 @@
         <HBox spacing="10" alignment="CENTER_RIGHT"
               GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="2">
             <Button fx:id="searchButton" text="Search" styleClass="action-button"/>
-            <Button fx:id="newMovementButton" text="New Movement" styleClass="action-button"/>
         </HBox>
     </GridPane>
 
@@ -53,6 +52,7 @@
     <!-- Bottom Controls -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button"/>
+        <Button fx:id="generatePdfButton" text="Generate PDF" styleClass="action-button"/>
     </HBox>
 
     <stylesheets>

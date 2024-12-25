@@ -48,6 +48,7 @@ public class StockMovementController implements Initializable {
     @FXML private Button searchButton;
     @FXML private Button newMovementButton;
     @FXML private Button viewDetailsButton;
+    @FXML private Button generatePdfButton;
 
     public StockMovementController(StockMovementService stockMovementService,
                                    ProductService productService,
@@ -86,8 +87,11 @@ public class StockMovementController implements Initializable {
         typeColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getType().toString()));
         productColumn.setCellValueFactory(data -> {
-            Product product = data.getValue().getProduct();
-            return new SimpleStringProperty(product != null ? product.getName() : "");
+            StockMovement movement = data.getValue();
+            Product product = movement.getProduct();
+            System.out.println("Product ID: " + (product != null ? product.getId() : "null"));
+            System.out.println("Product Object: " + product);
+            return new SimpleStringProperty(product != null ? product.getName() : "Product ID: " + movement.getProduct().getId());
         });
         quantityColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(String.valueOf(data.getValue().getQuantity())));
@@ -96,8 +100,11 @@ public class StockMovementController implements Initializable {
         reasonColumn.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getReason()));
         processedByColumn.setCellValueFactory(data -> {
-            Employee employee = data.getValue().getProcessedBy();
-            return new SimpleStringProperty(employee != null ? employee.getFullName() : "");
+            StockMovement movement = data.getValue();
+            Employee employee = movement.getProcessedBy();
+            System.out.println("Employee ID: " + (employee != null ? employee.getId() : "null"));
+            System.out.println("Employee Object: " + employee);
+            return new SimpleStringProperty(employee != null ? employee.getFullName() : "Employee ID: " + movement.getProcessedBy().getId());
         });
     }
 
@@ -123,8 +130,9 @@ public class StockMovementController implements Initializable {
 
     private void setupEventHandlers() {
         searchButton.setOnAction(e -> searchMovements());
-        newMovementButton.setOnAction(e -> showNewMovementDialog());
+//        newMovementButton.setOnAction(e -> showNewMovementDialog());
         viewDetailsButton.setOnAction(e -> showMovementDetails());
+        generatePdfButton.setOnAction(e -> printMovement());
     }
 
     private void setupContextMenu() {
@@ -385,6 +393,7 @@ public class StockMovementController implements Initializable {
                 alert.setContentText("PDF report has been generated successfully.");
                 alert.showAndWait();
             } catch (Exception e) {
+                e.printStackTrace();
                 showError("Error Generating PDF", "Failed to generate PDF report: " + e.getMessage());
             }
         }

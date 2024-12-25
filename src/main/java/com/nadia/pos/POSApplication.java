@@ -71,6 +71,12 @@ public class POSApplication extends Application {
                     productService
             );
 
+            DashboardController dashboardController = new DashboardController(
+                    customerService,
+                    employeeService,
+                    salesOrderService
+            );
+
             // Load scenes
             sceneManager.loadScene("main", "/fxml/main-layout.fxml", mainController);
             sceneManager.loadView("employees", "/fxml/employee-view.fxml", employeeController);
@@ -80,6 +86,8 @@ public class POSApplication extends Application {
             sceneManager.loadView("sales", "/fxml/sales-order-view.fxml", salesOrderController);
             sceneManager.loadView("inventories", "/fxml/inventory-view.fxml", inventoryController);
             sceneManager.loadView("stockMovements", "/fxml/stock-movement-view.fxml", stockMovementController);
+            sceneManager.loadView("dashboard", "/fxml/dashboard-view.fxml", dashboardController);
+
 
             // Switch to main scene and load views
             sceneManager.switchScene("main");
@@ -90,6 +98,8 @@ public class POSApplication extends Application {
             mainController.loadView("employees");
             mainController.loadView("inventories");
             mainController.loadView("stockMovements");
+            mainController.loadView("dashboard");
+
 
         } catch (Exception e) {
             e.printStackTrace();
