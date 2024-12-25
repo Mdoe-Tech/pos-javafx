@@ -12,7 +12,6 @@ import java.sql.SQLException;
 public class DependencyConfig {
     private static DependencyConfig instance;
 
-    // Services
     private final CustomerService customerService;
     private final ProductService productService;
     private final OrderService<Order> orderService;
@@ -22,7 +21,6 @@ public class DependencyConfig {
     private final StockMovementService stockMovementService;
 
     private DependencyConfig() throws SQLException {
-        // Initialize all DAOs first
         CustomerDAO customerDAO = new CustomerDAOImpl();
         ProductDAO productDAO = new ProductDAOImpl();
         OrderDAO<Order> orderDAO = new OrderDAOImpl<>();
@@ -31,19 +29,15 @@ public class DependencyConfig {
         InventoryDAO inventoryDAO = new InventoryDAOImpl();
         StockMovementDAO stockMovementDAO = new StockMovementDAOImpl();
 
-        // Initialize base services that don't depend on other services
         this.employeeService = new EmployeeServiceImpl(employeeDAO);
         this.productService = new ProductServiceImpl(productDAO);
         this.customerService = new CustomerServiceImpl(customerDAO);
 
-        // Initialize inventory and stock movement services
         this.inventoryService = new InventoryServiceImpl(inventoryDAO, productDAO,stockMovementDAO);
 
-        // Initialize order-related DAOs that depend on services
         SalesOrderDAO salesOrderDAO = new SalesOrderDAOImpl(customerService, employeeService);
         SalesOrderItemDAO salesOrderItemDAO = new SalesOrderItemDAOImpl(productService);
 
-        // Finally initialize order services
         this.orderService = new AbstractOrderServiceImpl<Order>(
                 orderDAO,
                 orderItemDAO,
